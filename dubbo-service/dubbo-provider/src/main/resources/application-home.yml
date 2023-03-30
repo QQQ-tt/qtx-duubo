@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: dubbo-provider
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.16.6.77:8848
+        namespace: f5b2bb31-650a-4d32-8ae1-66b11500243d
+    sentinel:
+      transport:
+        port: 8710
+        dashboard: localhost:8080
+  config:
+    import:
+      - optional:nacos:dubbo-provider.yaml  # 监听 DEFAULT_GROUP:test.yml
+dubbo:
+  application:
+    name: dubbo-provider-p
+  protocol:
+    name: tri
+    port: -1
+  registry:
+    address: nacos://172.16.6.77:8848
