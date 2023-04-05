@@ -1,4 +1,4 @@
-package qtx.dubbo.provider;
+package qtx.dubbo.consumer;
 
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -19,7 +19,7 @@ public class Generator {
       new DataSourceConfig.Builder("jdbc:mysql://172.16.6.77:3306/qtx_cloud", "root", "123456qaz");
 
   public static void main(String[] args) {
-    String dubboName = "provider";
+    String dubboName = "consumer";
     String path = "/dubbo-service/dubbo-" + dubboName;
     String projectPath = System.getProperty("user.dir");
 

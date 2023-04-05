@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
 import qtx.dubbo.model.base.BaseEntity;
+import java.io.Serializable;
 
 /**
  * 流程节点业务表
@@ -17,7 +18,9 @@ import qtx.dubbo.model.base.BaseEntity;
 @Getter
 @Setter
 @TableName("ac_business")
-public class AcBusiness extends BaseEntity {
+public class AcBusiness extends BaseEntity implements Serializable {
+
+  private static final long serialVersionUID = 7158911668568000392L;
 
   @TableId(value = "id", type = IdType.AUTO)
   private Integer id;

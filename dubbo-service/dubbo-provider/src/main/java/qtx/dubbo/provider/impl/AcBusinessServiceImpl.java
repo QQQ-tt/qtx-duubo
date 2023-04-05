@@ -1,5 +1,6 @@
 package qtx.dubbo.provider.impl;
 
+import org.apache.dubbo.config.annotation.DubboService;
 import qtx.dubbo.model.entity.provider.AcBusiness;
 import qtx.dubbo.provider.mapper.AcBusinessMapper;
 import qtx.dubbo.service.provider.AcBusinessService;
@@ -15,6 +16,11 @@ import org.springframework.stereotype.Service;
  * @since 2023-03-30
  */
 @Service
-public class AcBusinessServiceImpl extends ServiceImpl<AcBusinessMapper, AcBusiness> implements AcBusinessService {
-
+@DubboService
+public class AcBusinessServiceImpl extends ServiceImpl<AcBusinessMapper, AcBusiness>
+    implements AcBusinessService {
+  @Override
+  public String test() {
+    return "provider";
+  }
 }

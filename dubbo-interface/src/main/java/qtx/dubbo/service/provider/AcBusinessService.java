@@ -12,5 +12,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-03-30
  */
 public interface AcBusinessService extends IService<AcBusiness> {
+  /**
+   * 测试
+   * @return 返回值
+   */
+  String test();
 
 }
