@@ -13,6 +13,7 @@
         <module>dubbo-service</module>
         <module>dubbo-common</module>
         <module>dubbo-model</module>
+        <module>shenyu-gateway</module>
     </modules>
 
     <properties>
@@ -22,6 +23,7 @@
         <dubbo.version>3.2.0-beta.6</dubbo.version>
         <spring-cloud-alibaba.version>2022.0.0.0-RC1</spring-cloud-alibaba.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <shenyu.version>2.5.1</shenyu.version>
     </properties>
 
     <dependencyManagement>

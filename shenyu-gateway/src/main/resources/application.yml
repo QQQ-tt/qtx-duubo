@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: shenyu-gateway
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.16.6.77:8748
+        namespace: 0825b7fd-30bc-4df8-976f-eccce616b3e1
+  config:
+    import:
+      - optional:nacos:shenyu-gateway.yaml?group=CLOUD_GROUP  # 监听 DEFAULT_GROUP:test.yml
+  main:
+    allow-bean-definition-overriding: true
+management:
+  health:
+    defaults:
+      enabled: false
+shenyu:
+  register:
+    register-type: nacos
+    server-lists: ${spring.cloud.nacos.config.server-addr}
+  sync:
+    nacos:
+      url: ${spring.cloud.nacos.config.server-addr}
+      # url: 配置成你的 nacos地址，集群环境请使用（,）分隔。
+      namespace: ${spring.cloud.nacos.config.namespace}
+      username: nacos
+      password: nacos

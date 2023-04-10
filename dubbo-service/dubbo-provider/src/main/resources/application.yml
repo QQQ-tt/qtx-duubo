@@ -4,20 +4,30 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 172.16.6.77:8848
-        namespace: 79ec2bf2-77da-40a4-a877-a05dcadea95d
+        server-addr: 172.16.6.77:8748
+        namespace: 0825b7fd-30bc-4df8-976f-eccce616b3e1
     sentinel:
       transport:
         port: 8710
         dashboard: localhost:8080
   config:
     import:
-      - optional:nacos:dubbo-provider.yaml?group=DUBBO_MYSQL  # 监听 DEFAULT_GROUP:test.yml
+      - optional:nacos:dubbo-provider.yaml?group=CLOUD_GROUP  # 监听 DEFAULT_GROUP:test.yml
 dubbo:
   application:
-    name: dubbo_provider
+    name: dubbo-provider
   protocol:
-    name: tri
+    name: dubbo
     port: -1
   registry:
-    address: nacos://172.16.6.77:8848
+    address: nacos://172.16.6.77:8748?namespace=${spring.cloud.nacos.config.namespace}
+shenyu:
+  client:
+    registerType: nacos #zookeeper #etcd #nacos #consul
+    serverLists: ${spring.cloud.nacos.config.server-addr} #localhost:2181 #http://localhost:2379 #localhost:8848
+    props:
+      contextPath: /demo
+      appName: dubbo-provider
+      port: ${server.port}
+      isFull: true
+      nacosNameSpace: ${spring.cloud.nacos.config.namespace}

@@ -1,6 +1,8 @@
 package qtx.dubbo.provider.impl;
 
 import org.apache.dubbo.config.annotation.DubboService;
+import org.apache.shenyu.client.apache.dubbo.annotation.ShenyuDubboService;
+import org.apache.shenyu.client.dubbo.common.annotation.ShenyuDubboClient;
 import qtx.dubbo.model.entity.provider.AcBusiness;
 import qtx.dubbo.provider.mapper.AcBusinessMapper;
 import qtx.dubbo.service.provider.AcBusinessService;
@@ -17,9 +19,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @DubboService
+@ShenyuDubboService("/demo")
 public class AcBusinessServiceImpl extends ServiceImpl<AcBusinessMapper, AcBusiness>
     implements AcBusinessService {
   @Override
+  @ShenyuDubboClient(path = "/test")
   public String test() {
     return "provider";
   }
