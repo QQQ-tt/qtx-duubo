@@ -87,16 +87,5 @@
             <artifactId>protobuf-java</artifactId>
             <version>4.0.0-rc-2</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.shenyu</groupId>
-            <artifactId>shenyu-spring-boot-starter-client-apache-dubbo</artifactId>
-            <version>${shenyu.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shenyu</groupId>
-            <artifactId>shenyu-register-client-nacos</artifactId>
-            <version>${shenyu.version}</version>
-        </dependency>
     </dependencies>
-
 </project>
