@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;import qtx.dubbo.service.provider.AcBusinessService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <p>
  * 流程节点业务表 前端控制器
@@ -26,5 +29,10 @@ public class AcBusinessController {
   @GetMapping("/list")
   public Object list() {
     return acBusinessService.list();
+  }
+
+  @GetMapping("/testController")
+  public Map<String, Object> testController(){
+    return acBusinessService.test(new HashMap<>());
   }
 }

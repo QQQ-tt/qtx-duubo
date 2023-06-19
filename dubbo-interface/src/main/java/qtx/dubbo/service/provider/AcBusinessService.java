@@ -3,6 +3,8 @@ package qtx.dubbo.service.provider;
 import qtx.dubbo.model.entity.provider.AcBusiness;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Map;
+
 /**
  * <p>
  * 流程节点业务表 服务类
@@ -14,8 +16,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface AcBusinessService extends IService<AcBusiness> {
   /**
    * 测试
+   *
    * @return 返回值
    */
-  String test();
+  Map<String, Object> test(Map<String,Object> map);
 
 }
