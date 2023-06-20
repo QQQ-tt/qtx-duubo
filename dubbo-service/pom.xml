@@ -87,5 +87,10 @@
             <artifactId>protobuf-java</artifactId>
             <version>4.0.0-rc-2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client-java</artifactId>
+            <version>5.0.5</version>
+        </dependency>
     </dependencies>
 </project>
