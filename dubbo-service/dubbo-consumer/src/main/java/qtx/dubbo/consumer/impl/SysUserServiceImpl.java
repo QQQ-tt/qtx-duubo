@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-  @DubboReference private AcBusinessService acBusinessService;
+  @DubboReference(version = "0.0.0") private AcBusinessService acBusinessService;
 
   @Override
   public List<AcBusiness> listAc() {

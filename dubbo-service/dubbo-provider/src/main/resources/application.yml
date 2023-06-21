@@ -4,7 +4,7 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 172.16.6.77:8848
+        server-addr: ${VM_IP:127.0.0.1}:8848
         namespace: 79ec2bf2-77da-40a4-a877-a05dcadea95d
     sentinel:
       transport:
