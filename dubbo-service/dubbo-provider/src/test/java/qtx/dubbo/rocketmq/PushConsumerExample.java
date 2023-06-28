@@ -34,7 +34,7 @@ public class PushConsumerExample {
         // 为消费者指定所属的消费者分组，Group需要提前创建。
         String consumerGroup = "YourConsumerGroup";
         // 指定需要订阅哪个目标Topic，Topic需要提前创建。
-        String topic = "test";
+        String topic = "test_Normal";
         // 初始化PushConsumer，需要绑定消费者分组ConsumerGroup、通信参数以及订阅关系。
         PushConsumer pushConsumer = provider.newPushConsumerBuilder()
                 .setClientConfiguration(clientConfiguration)

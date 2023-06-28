@@ -2,7 +2,6 @@ package qtx.dubbo.provider.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.stereotype.Service;
 import qtx.dubbo.model.entity.provider.AcBusiness;
 import qtx.dubbo.provider.mapper.AcBusinessMapper;
 import qtx.dubbo.service.provider.AcBusinessService;
@@ -18,22 +17,21 @@ import java.util.Map;
  * @author qtx
  * @since 2023-03-30
  */
-@Service
-@DubboService(version = "0.0.0")
+@DubboService(version = "1.0.0")
 public class AcBusinessServiceImpl extends ServiceImpl<AcBusinessMapper, AcBusiness>
-    implements AcBusinessService {
+        implements AcBusinessService {
 
-  @Override
-  public Map<String, Object> test(Map<String, Object> map) {
-    for (Map.Entry<String, Object> entry : map.entrySet()) {
-      System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+
+    @Override
+    public Map<String, Object> test(Map<String, Object> map) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+
+        Map<String, Object> ret = new HashMap<>();
+        ret.put("body", "dubbo success"); // http response body
+        ret.put("status", "200"); // http response status
+        ret.put("test", "123"); // http response header
+        return ret;
     }
-
-    Map<String, Object> ret = new HashMap<>();
-    ret.put("body", "dubbo success\n"); // http response body
-    ret.put("status", "200"); // http response status
-    ret.put("test", "123"); // http response header
-
-    return ret;
-  }
 }

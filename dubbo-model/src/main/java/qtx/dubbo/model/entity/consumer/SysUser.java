@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import qtx.dubbo.model.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.io.Serializable;
 
 /**

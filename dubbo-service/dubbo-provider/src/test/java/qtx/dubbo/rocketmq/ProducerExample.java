@@ -27,7 +27,7 @@ public class ProducerExample {
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
         String endpoint = "172.16.6.77:8081";
         // 消息发送的目标Topic名称，需要提前创建。
-        String topic = "test";
+        String topic = "test_Normal";
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         ClientConfigurationBuilder builder = ClientConfiguration.newBuilder().setEndpoints(endpoint);
         ClientConfiguration configuration = builder.build();
@@ -40,7 +40,7 @@ public class ProducerExample {
         Message message = provider.newMessageBuilder()
                 .setTopic(topic)
                 // 设置消息索引键，可根据关键字精确查找某条消息。
-                .setKeys("messageKey12321213")
+                .setKeys("messageKey")
                 // 设置消息Tag，用于消费端根据指定Tag过滤消息。
                 .setTag("messageTag")
                 // 消息体。
