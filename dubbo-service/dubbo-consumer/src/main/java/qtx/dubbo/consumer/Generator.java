@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.generator.config.OutputFile;
 
 import java.util.*;
 
+import com.baomidou.mybatisplus.generator.config.TemplateType;
+import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import org.apache.ibatis.annotations.Mapper;
 import qtx.dubbo.model.base.BaseEntity;
 
@@ -51,7 +53,6 @@ public class Generator {
                                         .serviceImpl(dubboName + ".impl")
                                         .mapper(dubboName + ".mapper")
                                         .xml("mapper")
-                                        .controller(dubboName + ".controller")
                                         .pathInfo(map))
                 // 策略配置
                 .strategyConfig(
@@ -73,6 +74,8 @@ public class Generator {
                                         .mapperBuilder()
                                         .mapperAnnotation(Mapper.class)
                                         .build())
+                .templateEngine(new FreemarkerTemplateEngine())
+                .templateConfig(builder -> builder.disable(TemplateType.CONTROLLER))
                 .execute();
     }
 

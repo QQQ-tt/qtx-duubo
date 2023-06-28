@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.generator.config.OutputFile;
 
 import java.util.*;
 
+import com.baomidou.mybatisplus.generator.config.TemplateType;
+import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import org.apache.ibatis.annotations.Mapper;
 import qtx.dubbo.model.base.BaseEntity;
 
@@ -18,7 +20,7 @@ import qtx.dubbo.model.base.BaseEntity;
 public class Generator {
 
     private static final DataSourceConfig.Builder DATA_SOURCE_CONFIG =
-            new DataSourceConfig.Builder("jdbc:mysql://172.16.6.77:3306/qtx_cloud", "root", "123456qaz");
+            new DataSourceConfig.Builder("jdbc:mysql://192.168.77.130:3306/cloud", "root", "123456qaz");
 
     public static void main(String[] args) {
         String dubboName = "provider";
@@ -51,7 +53,6 @@ public class Generator {
                                         .serviceImpl(dubboName + ".impl")
                                         .mapper(dubboName + ".mapper")
                                         .xml("mapper")
-                                        .controller(dubboName + ".controller")
                                         .pathInfo(map))
                 // 策略配置
                 .strategyConfig(
@@ -59,8 +60,6 @@ public class Generator {
                                 builder
                                         .addInclude(
                                                 getTables(scanner.apply("请输入表名，多个英文逗号分隔？所有输入 all")))
-                                        .controllerBuilder()
-                                        .enableRestStyle()
                                         .serviceBuilder()
                                         .formatServiceFileName("%sService")
                                         .entityBuilder()
@@ -73,6 +72,8 @@ public class Generator {
                                         .mapperBuilder()
                                         .mapperAnnotation(Mapper.class)
                                         .build())
+                .templateEngine(new FreemarkerTemplateEngine())
+                .templateConfig(builder -> builder.disable(TemplateType.CONTROLLER))
                 .execute();
     }
 
