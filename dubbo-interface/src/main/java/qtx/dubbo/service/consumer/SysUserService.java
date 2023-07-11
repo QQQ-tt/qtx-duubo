@@ -22,7 +22,8 @@ public interface SysUserService extends IService<SysUser> {
 
   /**
    * 测试
+   *
    * @return 返回值
    */
-  String test();
+  AcBusiness test();
 }

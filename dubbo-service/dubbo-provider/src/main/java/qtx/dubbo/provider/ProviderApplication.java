@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author qtx
  * @since 2023/3/30 20:32
  */
-@MapperScan(basePackages = "qtx.dubbo.consumer.mapper")
+@MapperScan(basePackages = "qtx.dubbo.provider.mapper")
 @EnableDubbo(scanBasePackages = "qtx.dubbo.provider.impl")
 @SpringBootApplication(scanBasePackages = "qtx.dubbo")
 public class ProviderApplication {

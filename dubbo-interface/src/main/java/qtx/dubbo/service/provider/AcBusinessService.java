@@ -21,4 +21,6 @@ public interface AcBusinessService extends IService<AcBusiness> {
    */
   Map<String, Object> test(Map<String,Object> map);
 
+  AcBusiness test1(boolean flag);
+
 }

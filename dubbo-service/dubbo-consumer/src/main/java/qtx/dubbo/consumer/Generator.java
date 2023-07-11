@@ -74,8 +74,8 @@ public class Generator {
                                         .mapperBuilder()
                                         .mapperAnnotation(Mapper.class)
                                         .build())
-                .templateEngine(new FreemarkerTemplateEngine())
-                .templateConfig(builder -> builder.disable(TemplateType.CONTROLLER))
+//                .templateEngine(new FreemarkerTemplateEngine())
+//                .templateConfig(builder -> builder.disable(TemplateType.CONTROLLER))
                 .execute();
     }
 

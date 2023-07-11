@@ -52,6 +52,7 @@ public class Generator {
                                         .service("service." + dubboName)
                                         .serviceImpl(dubboName + ".impl")
                                         .mapper(dubboName + ".mapper")
+                                        .controller(dubboName + ".controller")
                                         .xml("mapper")
                                         .pathInfo(map))
                 // 策略配置
@@ -60,6 +61,8 @@ public class Generator {
                                 builder
                                         .addInclude(
                                                 getTables(scanner.apply("请输入表名，多个英文逗号分隔？所有输入 all")))
+                                        .controllerBuilder()
+                                        .enableRestStyle()
                                         .serviceBuilder()
                                         .formatServiceFileName("%sService")
                                         .entityBuilder()
@@ -72,8 +75,8 @@ public class Generator {
                                         .mapperBuilder()
                                         .mapperAnnotation(Mapper.class)
                                         .build())
-                .templateEngine(new FreemarkerTemplateEngine())
-                .templateConfig(builder -> builder.disable(TemplateType.CONTROLLER))
+//                .templateEngine(new FreemarkerTemplateEngine())
+//                .templateConfig(builder -> builder.disable(TemplateType.CONTROLLER))
                 .execute();
     }
 

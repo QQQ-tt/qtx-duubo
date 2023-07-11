@@ -32,11 +32,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public String test() {
+    public AcBusiness test() {
+        AcBusiness acBusiness = acBusinessService.test1(true);
 //    return acBusinessService.test();
         HashMap<String, Object> map = new HashMap<>();
         map.put("hhh", "哈哈哈");
         acBusinessService.test(map);
-        return null;
+        return acBusiness;
     }
 }

@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import qtx.dubbo.model.base.BaseEntity;
 
 import java.io.Serializable;
@@ -18,6 +17,9 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("ac_business")
 public class AcBusiness extends BaseEntity implements Serializable {
 
