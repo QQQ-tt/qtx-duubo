@@ -8,7 +8,6 @@ import org.apache.dubbo.rpc.RpcException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import qtx.dubbo.java.Result;
-import qtx.dubbo.java.exception.DataException;
 
 /**
  * 全局异常处理

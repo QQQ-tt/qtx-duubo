@@ -1,0 +1,20 @@
+server:
+  port: 19081
+knife4j:
+  cloud:
+    enable: true
+    routes:
+      - name: dubbo-provider
+        uri: http://localhost:3010
+        location: /v3/api-docs?group=dubbo-provider
+        order: 1
+      - name: dubbo-consumer
+        uri: http://localhost:3011
+        location: /v3/api-docs?group=dubbo-consumer
+        order: 1
+  connection-setting:
+    socket-timeout: 20000
+    connect-timeout: 20000
+    max-connection-total: 200
+    max-pre-route: 20
+  enable-aggregation: true
