@@ -15,13 +15,15 @@ public enum DataEnums {
     /** 密码错误 */
     WRONG_PASSWORD("密码错误", 205),
     /** 无法访问 */
-    ACCESS_DENIED("无法访问", 403),
+    ACCESS_DENIED("无法访问,请联系管理员", 403),
     /** 登录已过期 */
-    USER_LOGIN_EXPIRED("登录已过期", 401),
+    TOKEN_LOGIN_EXPIRED("登录已过期", 401),
     /** 验证码已过期 */
     AUTH_CODE_EXPIRED("验证码已过期", 201),
     /** token不存在 */
     TOKEN_IS_NULL("token不存在", 201),
+    /** token非法 */
+    TOKEN_IS_ILLEGAL("token非法", 201),
     /** 账户已锁定5分钟 */
     USER_LOGIN_LOCKING("账户已锁定5分钟", 403),
     /** 用户未登录 */
