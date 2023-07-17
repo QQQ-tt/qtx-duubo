@@ -1,0 +1,8 @@
+#普通消息
+sh mqadmin updateTopic -n namesrv:9876 -t test_Normal -c DefaultCluster -a +message.type=NORMAL
+#顺序消息
+sh mqadmin updateTopic -n namesrv:9876 -t test_FIFO -c DefaultCluster -a +message.type=FIFO
+#定时/延时消息
+sh mqadmin updateTopic -n namesrv:9876 -t test_Delay -c DefaultCluster -a +message.type=DELAY
+#事务消息
+sh mqadmin updateTopic -n namesrv:9876 -t test_Transaction -c DefaultCluster -a +message.type=TRANSACTION
