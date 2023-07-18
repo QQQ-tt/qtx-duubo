@@ -1,16 +1,18 @@
 package qtx.dubbo.config.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.ClientServiceProvider;
 import org.apache.rocketmq.client.apis.message.Message;
 import org.apache.rocketmq.client.apis.producer.Producer;
 import org.apache.rocketmq.client.apis.producer.SendReceipt;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import qtx.dubbo.config.rocketmq.ProducerFactory;
 import qtx.dubbo.java.enums.RocketMQEnums;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author qtx
@@ -20,13 +22,10 @@ import qtx.dubbo.java.enums.RocketMQEnums;
 @Component
 public class RocketMQUtils {
 
-    @Value("${rocketmq.endpoint}")
-    private String endpoint;
+    private final ProducerFactory producerFactory;
 
-    private final ClientConfiguration configuration;
-
-    public RocketMQUtils(ClientConfiguration configuration) {
-        this.configuration = configuration;
+    public RocketMQUtils(ProducerFactory producerFactory) {
+        this.producerFactory = producerFactory;
     }
 
     /**
@@ -39,7 +38,7 @@ public class RocketMQUtils {
     public void sendMsg(RocketMQEnums rocketMQEnums, String messageBody) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = getProducer(rocketMQEnums, provider);
+        Producer producer = producerFactory.getInstance(rocketMQEnums.getTopic());
         //普通消息发送。
         Message message = provider.newMessageBuilder()
                 .setTopic(rocketMQEnums.getTopic())
@@ -58,6 +57,43 @@ public class RocketMQUtils {
             log.error("Failed to send message", e);
             e.printStackTrace();
         }
+
+    }
+
+    /**
+     * 发送普通消息(异步)
+     *
+     * @param rocketMQEnums 消息类型
+     * @param messageBody   消息内容
+     * @throws ClientException 连接异常
+     */
+    public void sendAsyncMsg(RocketMQEnums rocketMQEnums, String messageBody) throws ClientException {
+        ClientServiceProvider provider = ClientServiceProvider.loadService();
+        // 初始化Producer时需要设置通信配置以及预绑定的Topic。
+        Producer producer = producerFactory.getInstance(rocketMQEnums.getTopic());
+        //普通消息发送。
+        Message message = provider.newMessageBuilder()
+                .setTopic(rocketMQEnums.getTopic())
+                //设置消息索引键，可根据关键字精确查找某条消息。
+                .setKeys(rocketMQEnums.getKey())
+                //设置消息Tag，用于消费端根据指定Tag过滤消息。
+                .setTag(rocketMQEnums.getTag())
+                //消息体。
+                .setBody(messageBody.getBytes())
+                .build();
+        //发送消息，需要关注发送结果，并捕获失败等异常。
+        // Set individual thread pool for send callback.
+        final CompletableFuture<SendReceipt> future = producer.sendAsync(message);
+        ExecutorService sendCallbackExecutor = Executors.newCachedThreadPool();
+        future.whenCompleteAsync((sendReceipt, throwable) -> {
+            if (null != throwable) {
+                log.error("Failed to send message", throwable);
+                // Return early.
+                return;
+            }
+            log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
+        }, sendCallbackExecutor);
+
     }
 
     /**
@@ -71,7 +107,7 @@ public class RocketMQUtils {
     public void sendMsg(RocketMQEnums rocketMQEnums, String messageBody, Long deliverTimeStamp) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = getProducer(rocketMQEnums, provider);
+        Producer producer = producerFactory.getInstance(rocketMQEnums.getTopic());
         //普通消息发送。
         Message message = provider.newMessageBuilder()
                 .setTopic(rocketMQEnums.getTopic())
@@ -105,7 +141,7 @@ public class RocketMQUtils {
     public void sendMsg(RocketMQEnums rocketMQEnums, String messageBody, String msgGroup) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = getProducer(rocketMQEnums, provider);
+        Producer producer = producerFactory.getInstance(rocketMQEnums.getTopic());
         //普通消息发送。
         Message message = provider.newMessageBuilder()
                 .setTopic(rocketMQEnums.getTopic())
@@ -127,19 +163,4 @@ public class RocketMQUtils {
             e.printStackTrace();
         }
     }
-
-    @Bean
-    public ClientConfiguration getClientConfiguration() {
-        return ClientConfiguration.newBuilder()
-                .setEndpoints(endpoint)
-                .build();
-    }
-
-    private Producer getProducer(RocketMQEnums rocketMQEnums, ClientServiceProvider provider) throws ClientException {
-        return provider.newProducerBuilder()
-                .setTopics(rocketMQEnums.getTopic())
-                .setClientConfiguration(configuration)
-                .build();
-    }
-
 }

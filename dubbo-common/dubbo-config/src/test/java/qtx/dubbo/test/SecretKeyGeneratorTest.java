@@ -11,6 +11,9 @@ import java.util.Base64;
  */
 public class SecretKeyGeneratorTest {
 
+    /**
+     * 生成安全密钥
+     */
     @Test
     public void test() {
         SecureRandom random = new SecureRandom();
