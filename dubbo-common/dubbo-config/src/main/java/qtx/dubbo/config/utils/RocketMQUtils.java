@@ -30,7 +30,7 @@ public class RocketMQUtils {
     }
 
     /**
-     * 发送普通消息
+     * 发送普通消息(同步)
      *
      * @param rocketMQEnums 消息类型
      * @param messageBody   消息内容
