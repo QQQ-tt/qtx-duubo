@@ -19,9 +19,6 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class ProducerFactory {
 
-    @Value("${rocketmq.endpoint}")
-    private String endpoint;
-
     private static final ConcurrentMap<String, Producer> PRODUCER = new ConcurrentHashMap<>(50);
     private static final ConcurrentMap<String, Producer> TRANSACTIONAL_PRODUCER = new ConcurrentHashMap<>(100);
 
@@ -31,15 +28,6 @@ public class ProducerFactory {
         this.configuration = configuration;
     }
 
-    @Bean
-    public ClientConfiguration getClientConfiguration() {
-        return ClientConfiguration.newBuilder()
-                .setEndpoints(endpoint)
-                // On some Windows platforms, you may encounter SSL compatibility issues. Try turning off the SSL option in
-                // client configuration to solve the problem please if SSL is not essential.
-                // .enableSsl(false)
-                .build();
-    }
 
     private Producer buildProducer(TransactionChecker checker, String... topics) throws ClientException {
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
