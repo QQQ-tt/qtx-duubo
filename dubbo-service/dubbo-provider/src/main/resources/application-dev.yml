@@ -26,3 +26,5 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+rocketmq:
+  endpoint: 192.168.77.130:8081

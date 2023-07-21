@@ -25,7 +25,7 @@ public class ProducerExample {
 
     public static void main(String[] args) throws ClientException {
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-        String endpoint = "172.16.6.77:8081";
+        String endpoint = "192.168.77.130:8081";
         // 消息发送的目标Topic名称，需要提前创建。
         String topic = "test_Normal";
         ClientServiceProvider provider = ClientServiceProvider.loadService();
