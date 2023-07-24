@@ -18,10 +18,8 @@ import java.io.IOException;
  * @author qtx
  * @since 2023/6/20 22:50
  */
-@Slf4j
+@Slf4j(topic = "ProducerExample测试类")
 public class ProducerExample {
-
-//    private static final Logger logger = LoggerFactory.getLogger(ProducerExample.class);
 
     public static void main(String[] args) throws ClientException {
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。

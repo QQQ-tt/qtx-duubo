@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: dubbo-activity
+  cloud:
+    nacos:
+      config:
+        server-addr: ${VM_IP:127.0.0.1}:8848
+        namespace: 79ec2bf2-77da-40a4-a877-a05dcadea95d
+  config:
+    import:
+      - optional:nacos:dubbo-activity.yaml?group=CLOUD_GROUP  # 监听 DEFAULT_GROUP:test.yml
