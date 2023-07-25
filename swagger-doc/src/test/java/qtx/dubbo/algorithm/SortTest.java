@@ -63,7 +63,7 @@ public class SortTest {
         }
         System.out.println(Arrays.toString(ints));
         long x = System.currentTimeMillis();
-        int i = quick_find(ints, 0, ints.length - 1, 2);
+        int i = quick_find(ints, 0, ints.length - 1, 1);
         long l = System.currentTimeMillis();
         System.out.println(l - x);
         System.out.println(i);
@@ -90,13 +90,31 @@ public class SortTest {
                 swap(q, i, j);
             }
         }
-        if (j - i + 1 >= k) {
+        if (j - l + 1 >= k) {
             // 排左面
             return quick_find(q, l, j, k);
         } else {
             // 排右面
-            return quick_find(q, j + 1, r, k);
+            return quick_find(q, j + 1, r, k - (j - l + 1));
         }
+    }
+
+    @Test
+    public void test3() {
+        int[] arr = {3, 2, 3, 1, 2, 4, 5, 5, 6};
+        System.out.println(findKthLargest(arr, 4));
+    }
+
+    /**
+     * @param nums 数组
+     * @param k 第k大的数
+     * @return 结果
+     */
+    int findKthLargest(int[] nums, int k) {
+        int[] array = Arrays.stream(nums)
+                .distinct()
+                .toArray();
+        return quick_find(nums, 0, nums.length - 1, nums.length - k + 1);
     }
 
 

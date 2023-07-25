@@ -13,7 +13,7 @@ import qtx.dubbo.service.consumer.SysUserService;
  * @author qtx
  * @since 2023/7/11
  */
-@Tag(name = "sysuser")
+@Tag(name = "sys-user")
 @RestController
 @RequestMapping("/sysUser")
 public class SysUserController {

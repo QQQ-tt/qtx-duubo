@@ -1,0 +1,11 @@
+version: '3.8'
+
+networks:
+  dubbo:
+
+services:
+  dubbo-provider:
+    image: provider:latest
+    restart: always
+    networks:
+      dubbo:
