@@ -1,9 +1,12 @@
 package qtx.dubbo.java.enums;
 
+import lombok.Getter;
+
 /**
  * @author qtx
  * @since 2023/7/3
  */
+@Getter
 public enum DataEnums {
 
     /** 成功 */
@@ -60,11 +63,4 @@ public enum DataEnums {
         return this.msg;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
 }

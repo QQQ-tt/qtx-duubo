@@ -1,11 +1,15 @@
 package qtx.dubbo.java.enums;
 
+import lombok.Getter;
+
 /**
  * @author qtx
  * @since 2023/7/17
  */
+@Getter
 public enum RocketMQTopicEnums {
-    TOPIC_TAG("主题","标签");
+    TOPIC_TAG("主题","标签"),
+    Log_Normal("Log_Normal","log");
 
     /**
      * 主题
@@ -22,11 +26,4 @@ public enum RocketMQTopicEnums {
         this.tag = tag;
     }
 
-    public String getTopic() {
-        return topic;
-    }
-
-    public String getTag() {
-        return tag;
-    }
 }

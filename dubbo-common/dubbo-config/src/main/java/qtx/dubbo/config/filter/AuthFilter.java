@@ -9,14 +9,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.client.apis.ClientException;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import qtx.dubbo.config.utils.CommonMethod;
 import qtx.dubbo.config.utils.JwtUtils;
 import qtx.dubbo.config.utils.RedisUtils;
+import qtx.dubbo.config.utils.RocketMQUtils;
 import qtx.dubbo.java.enums.AuthUrlEnums;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.enums.LogUrlEnums;
+import qtx.dubbo.java.enums.RocketMQTopicEnums;
 import qtx.dubbo.java.info.StaticConstant;
 
 import java.io.IOException;
@@ -35,9 +38,12 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private final RedisUtils redisUtils;
 
-    public AuthFilter(CommonMethod commonMethod, RedisUtils redisUtils) {
+    private final RocketMQUtils rocketMQUtils;
+
+    public AuthFilter(CommonMethod commonMethod, RedisUtils redisUtils, RocketMQUtils rocketMQUtils) {
         this.commonMethod = commonMethod;
         this.redisUtils = redisUtils;
+        this.rocketMQUtils = rocketMQUtils;
     }
 
     @Override
@@ -46,8 +52,15 @@ public class AuthFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String ip = request.getHeader(StaticConstant.IP);
 
+        if (AuthUrlEnums.authPath(uri)) {
+            RequestWrapper requestWrapper = getRequestWrapper(request, uri, null);
+            commonMethod.setIp(ip);
+            filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
+            return;
+        }
+
         String token = request.getHeader(StaticConstant.TOKEN);
-        if (!AuthUrlEnums.authPath(uri) && StringUtils.isBlank(token)) {
+        if (StringUtils.isBlank(token)) {
             commonMethod.failed(response, DataEnums.ACCESS_DENIED);
             return;
         }
@@ -67,28 +80,52 @@ public class AuthFilter extends OncePerRequestFilter {
             commonMethod.failed(response, DataEnums.TOKEN_LOGIN_EXPIRED);
             return;
         }
-        if (!redisUser.get("userCode").toString()
+        if (!redisUser.get("userCode")
+                .toString()
                 .equals(userCode)) {
             commonMethod.failed(response, DataEnums.TOKEN_IS_ILLEGAL);
             return;
         }
 
-        RequestWrapper requestWrapper = null;
-        if (!LogUrlEnums.logPath(uri)) {
-            requestWrapper = new RequestWrapper(request);
-            String s = JSON.toJSONString(requestWrapper.getBodyString());
-            String replaceAll = s.replaceAll(" ", "")
-                    .replaceAll("\\\\n", "")
-                    .replaceAll("\\\\", "");
-            log.info("userCode:{};request:[method:{},path:{},json:{},param:{}]", userCode,
-                    request.getMethod(),
-                    uri,
-                    replaceAll,
-                    JSON.toJSONString(request.getParameterMap()));
-        }
+        RequestWrapper requestWrapper = getRequestWrapper(request, uri, userCode);
         commonMethod.setUserCode(userCode);
         commonMethod.setIp(ip);
 
         filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
+    }
+
+
+    private RequestWrapper getRequestWrapper(HttpServletRequest request, String uri, String userCode) throws IOException {
+        RequestWrapper requestWrapper = null;
+        String method = request.getMethod();
+        String json = null, param = null;
+        if (!LogUrlEnums.logPath(uri)) {
+            requestWrapper = new RequestWrapper(request);
+            String s = JSON.toJSONString(requestWrapper.getBodyString());
+            json = s.replaceAll(" ", "")
+                    .replaceAll("\\\\n", "")
+                    .replaceAll("\\\\", "");
+            param = JSON.toJSONString(request.getParameterMap());
+            log.info("userCode:{};request:[method:{},path:{},json:{},param:{}]", userCode,
+                    method,
+                    uri,
+                    json,
+                    param);
+        }
+        try {
+            rocketMQUtils.sendAsyncMsg(RocketMQTopicEnums.Log_Normal, String.valueOf(System.currentTimeMillis()),
+                    JSON.toJSONString(
+                            LogBO.builder()
+                                    .userCode(userCode)
+                                    .method(method)
+                                    .path(uri)
+                                    .param(uri)
+                                    .json(json)
+                                    .param(param)
+                                    .build()));
+        } catch (ClientException e) {
+            throw new RuntimeException(e);
+        }
+        return requestWrapper;
     }
 }

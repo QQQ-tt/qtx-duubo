@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RpcException.class)
     public Result<String> dateException(RpcException e) {
-        log.info(e.getMessage());
+        log.info("RpcException:{}" + e.getMessage().toString());
         return Result.failed(e.getMessage(), e.getCode());
     }
 
@@ -36,7 +36,6 @@ public class GlobalExceptionHandler {
     public Result<String> exception(Exception e, HttpServletRequest request, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         log.error(e.getMessage());
-        e.printStackTrace();
         return Result.failed(e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 }

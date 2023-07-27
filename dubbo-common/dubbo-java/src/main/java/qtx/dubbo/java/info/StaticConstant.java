@@ -18,4 +18,10 @@ public class StaticConstant {
     /** 用户登录token */
     public static final String LOGIN_USER = "login:user:";
     public static final String REDIS_INFO = ":info";
+
+    public static final int STRING_MAX_SIZE = 255;
+
+    public static final String STRING_SIZ_ERROR = "字符长度异常";
+
+    public static final String ACTIVITY_PARENT = "000000";
 }

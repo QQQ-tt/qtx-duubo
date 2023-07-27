@@ -38,7 +38,11 @@ public enum AuthUrlEnums {
     /**
      * 放行地址:刷新token
      */
-    REFRESH_TOKEN("/auth/sysUser/token", 0);
+    REFRESH_TOKEN("/auth/sysUser/token", 0),
+    /**
+     * 测试接口放行
+     */
+    TEST("/sysUser/test", 0);
 
 
     private final String context;
@@ -55,12 +59,12 @@ public enum AuthUrlEnums {
 
 
     public static boolean authPath(String path) {
-        if (AUTH_1.contains(path)){
+        if (AUTH_1.contains(path)) {
             return true;
         }
         AntPathMatcher matcher = new AntPathMatcher();
         for (String s : AUTH_2) {
-            if (matcher.match(s, path)){
+            if (matcher.match(s, path)) {
                 return true;
             }
         }
@@ -73,9 +77,9 @@ public enum AuthUrlEnums {
     static {
         Stream.of(AuthUrlEnums.values())
                 .forEach(e -> {
-                    if (e.pathType == 0){
+                    if (e.pathType == 0) {
                         AuthUrlEnums.AUTH_1.add(e.context);
-                    }else {
+                    } else {
                         AuthUrlEnums.AUTH_2.add(e.context);
                     }
                 });

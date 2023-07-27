@@ -18,8 +18,11 @@ import java.time.LocalDateTime;
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
 
-    @Autowired
-    private CommonMethod commonMethod;
+    private final CommonMethod commonMethod;
+
+    public MyMetaObjectHandler(CommonMethod commonMethod) {
+        this.commonMethod = commonMethod;
+    }
 
     @Override
     public void insertFill(MetaObject metaObject) {
@@ -27,6 +30,9 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         String user = commonMethod.getUser();
         if (StringUtils.isBlank(user)) {
             user = commonMethod.getIp();
+            if (StringUtils.isBlank(user)){
+                user = "system";
+            }
         }
         this.strictInsertFill(metaObject, "createOn", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "createBy", String.class, user);
@@ -39,6 +45,9 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         String user = commonMethod.getUser();
         if (StringUtils.isBlank(user)) {
             user = commonMethod.getIp();
+            if (StringUtils.isBlank(user)){
+                user = "system";
+            }
         }
         this.strictUpdateFill(metaObject, "updateOn", LocalDateTime.class, LocalDateTime.now());
         this.strictUpdateFill(metaObject, "updateBy", String.class, user);

@@ -1,12 +1,16 @@
 package qtx.dubbo.java.enums;
 
+import lombok.Getter;
+
 /**
  * @author qtx
  * @since 2023/7/19
  */
+@Getter
 public enum RocketMQConsumerEnums {
 
-    CONSUMER_GROUP_NAME("消费者组名称");
+    CONSUMER_GROUP_NAME("消费者组名称"),
+    Log_consumer_group("Log_consumer_group");
 
     /**
      * 消费者组
@@ -18,7 +22,4 @@ public enum RocketMQConsumerEnums {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
 }
