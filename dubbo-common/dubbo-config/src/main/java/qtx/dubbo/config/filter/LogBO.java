@@ -13,6 +13,8 @@ public class LogBO {
 
     private String userCode;
 
+    private String createBy;
+
     private String method;
 
     private String path;

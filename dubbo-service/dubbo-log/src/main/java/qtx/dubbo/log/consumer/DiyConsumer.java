@@ -1,6 +1,5 @@
 package qtx.dubbo.log.consumer;
 
-import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +13,6 @@ import qtx.dubbo.java.enums.RocketMQTopicEnums;
 import qtx.dubbo.log.impl.SysLogServiceImpl;
 import qtx.dubbo.model.entity.log.SysLog;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -47,12 +44,8 @@ public class DiyConsumer {
                 RocketMQConsumerEnums.Log_consumer_group,
                 messageView -> {
                     try {
-                        ByteBuffer body = messageView.getBody();
-                        byte[] bytes = new byte[body.remaining()];
-                        body.get(bytes);
-                        String s = new String(bytes, StandardCharsets.UTF_8);
-                        SysLog sysLog = JSONObject.parseObject(s, SysLog.class);
-                        service.save(sysLog);
+                        SysLog entity = RocketMQUtils.getEntity(messageView, SysLog.class);
+                        service.save(entity);
                         log.info("Consume message successfully, messageId={}", messageView.getMessageId());
                         return ConsumeResult.SUCCESS;
                     } catch (Exception e) {

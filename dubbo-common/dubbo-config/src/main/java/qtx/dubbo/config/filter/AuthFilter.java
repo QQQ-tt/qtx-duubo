@@ -50,10 +50,10 @@ public class AuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
-        String ip = request.getHeader(StaticConstant.IP);
+        String ip = request.getRemoteAddr();
 
         if (AuthUrlEnums.authPath(uri)) {
-            RequestWrapper requestWrapper = getRequestWrapper(request, uri, null);
+            RequestWrapper requestWrapper = getRequestWrapper(request, uri, null, ip);
             commonMethod.setIp(ip);
             filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
             return;
@@ -87,7 +87,7 @@ public class AuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        RequestWrapper requestWrapper = getRequestWrapper(request, uri, userCode);
+        RequestWrapper requestWrapper = getRequestWrapper(request, uri, userCode, ip);
         commonMethod.setUserCode(userCode);
         commonMethod.setIp(ip);
 
@@ -95,7 +95,7 @@ public class AuthFilter extends OncePerRequestFilter {
     }
 
 
-    private RequestWrapper getRequestWrapper(HttpServletRequest request, String uri, String userCode) throws IOException {
+    private RequestWrapper getRequestWrapper(HttpServletRequest request, String uri, String userCode, String ip) throws IOException {
         RequestWrapper requestWrapper = null;
         String method = request.getMethod();
         String json = null, param = null;
@@ -119,9 +119,9 @@ public class AuthFilter extends OncePerRequestFilter {
                                     .userCode(userCode)
                                     .method(method)
                                     .path(uri)
-                                    .param(uri)
                                     .json(json)
                                     .param(param)
+                                    .createBy(ip)
                                     .build()));
         } catch (ClientException e) {
             throw new RuntimeException(e);

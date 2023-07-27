@@ -1,6 +1,6 @@
 package qtx.dubbo.config.utils;
 
-import lombok.SneakyThrows;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientException;
@@ -10,12 +10,18 @@ import org.apache.rocketmq.client.apis.consumer.FilterExpressionType;
 import org.apache.rocketmq.client.apis.consumer.MessageListener;
 import org.apache.rocketmq.client.apis.consumer.PushConsumer;
 import org.apache.rocketmq.client.apis.message.Message;
-import org.apache.rocketmq.client.apis.producer.*;
+import org.apache.rocketmq.client.apis.message.MessageView;
+import org.apache.rocketmq.client.apis.producer.Producer;
+import org.apache.rocketmq.client.apis.producer.SendReceipt;
+import org.apache.rocketmq.client.apis.producer.Transaction;
+import org.apache.rocketmq.client.apis.producer.TransactionChecker;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.config.rocketmq.ProducerFactory;
 import qtx.dubbo.java.enums.RocketMQConsumerEnums;
 import qtx.dubbo.java.enums.RocketMQTopicEnums;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -65,7 +71,6 @@ public class RocketMQUtils {
             log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
         } catch (ClientException e) {
             log.error("Failed to send message", e);
-            e.printStackTrace();
         }
     }
 
@@ -135,7 +140,6 @@ public class RocketMQUtils {
             log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
         } catch (ClientException e) {
             log.error("Failed to send message", e);
-            e.printStackTrace();
         }
     }
 
@@ -169,7 +173,6 @@ public class RocketMQUtils {
             log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
         } catch (ClientException e) {
             log.error("Failed to send message", e);
-            e.printStackTrace();
         }
     }
 
@@ -203,7 +206,6 @@ public class RocketMQUtils {
             log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
         } catch (ClientException e) {
             log.error("Failed to send message", e);
-            e.printStackTrace();
         }
         transaction.commit();
     }
@@ -226,5 +228,19 @@ public class RocketMQUtils {
                 .setSubscriptionExpressions(Collections.singletonMap(rocketMQTopicEnums.getTopic(), filterExpression))
                 .setMessageListener(messageListener)
                 .build();
+    }
+
+    /**
+     * 转换成对象
+     * @param messageView 消息
+     * @param tClass 目标对象类型
+     * @return 转换结果
+     */
+    public static <T> T getEntity(MessageView messageView, Class<T> tClass) {
+        ByteBuffer body = messageView.getBody();
+        byte[] bytes = new byte[body.remaining()];
+        body.get(bytes);
+        String s = new String(bytes, StandardCharsets.UTF_8);
+        return JSONObject.parseObject(s, tClass);
     }
 }
