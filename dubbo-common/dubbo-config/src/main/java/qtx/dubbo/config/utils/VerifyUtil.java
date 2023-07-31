@@ -35,7 +35,6 @@ public class VerifyUtil {
     /**
      * 初始化基础参数
      *
-     * @param builder
      */
     private VerifyUtil(Builder builder) {
         SIZE = builder.size;
@@ -50,7 +49,6 @@ public class VerifyUtil {
     /**
      * 实例化构造器对象
      *
-     * @return
      */
     public static Builder newBuilder() {
         return new Builder();
