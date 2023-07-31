@@ -3,6 +3,7 @@ package qtx.dubbo.consumer.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import qtx.dubbo.java.Result;
@@ -26,8 +27,14 @@ public class SysUserController {
 
     @Operation(summary = "test_get")
     @GetMapping("/test")
-    public Result<AcBusiness> test(){
+    public Result<AcBusiness> test() {
         AcBusiness test = service.test();
         return Result.success(test);
+    }
+
+    @Operation(summary = "test_post")
+    @PostMapping("/test1")
+    public Result<Object> test1() {
+        return Result.success();
     }
 }

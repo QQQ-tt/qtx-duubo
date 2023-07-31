@@ -127,7 +127,7 @@ public class DataListener<E> implements ReadListener<E> {
             log.info("{}条数据，开始转换数据格式。", cachedDataList.size());
             saveList.addAll(new HashSet<>(convert.convert(cachedDataList)));
         } else {
-            Set<E> set = new HashSet<>(service.query().eq("is_delete", "0").list());
+            Set<E> set = new HashSet<>(service.query().eq("delete_flag", "0").list());
             asList = new HashSet<>(cachedDataList);
             asList.forEach(s -> {
                 if (!set.contains(s)) {

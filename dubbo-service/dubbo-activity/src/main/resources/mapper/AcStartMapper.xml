@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="qtx.dubbo.activity.mapper.AcStartMapper">
+
+    <select id="selectAc" resultType="qtx.dubbo.model.bo.activity.AcBO">
+        select an.ac_uuid,
+        an.name,
+        ann.node_name,
+        ann.node_group,
+        ann.node_pass_num,
+        ann.ac_name_uuid,
+        ann.node_type,
+        ann.is_hidden as hidden,
+        ab.business_info
+        from ac_name an
+        left join ac_node ann on an.id = ann.ac_name_id and an.delete_flag = ann.delete_flag
+        left join ac_business ab on ann.id = ab.ac_node_id and an.delete_flag = ab.delete_flag
+        where an.ac_uuid = #{acUuid}
+        and an.delete_flag = false
+        <if test="flag == true and flag != null">
+            and ann.node_group = 1
+        </if>
+        <if test="group != null and group != ''">
+            and ann.node_group = #{group}
+        </if>
+        order by node_group
+    </select>
+    <select id="selectToDo" resultType="qtx.dubbo.model.vo.activity.AcToDoVO">
+        select ac_name, count(*) as num
+        from ac_start
+        where ac_business = #{userCard}
+        and is_node = true
+        and is_his = false
+        and this_flag is null
+        <if test="acUuid != null and acUuid != ''">
+            and ac_uuid = #{acUuid}
+        </if>
+        group by ac_uuid
+    </select>
+    <select id="selectTask" resultType="qtx.dubbo.model.vo.activity.TaskVO">
+        with info as (select ac_uuid, task_uuid, parent_task_node_uuid
+                      from ac_start
+                      where delete_flag = false
+                        and task_uuid = #{taskUuid}
+                      group by ac_uuid, task_uuid),
+             ac as (select an.ac_uuid,
+                           ann.node_name,
+                           ann.node_group,
+                           ann.ac_name_uuid,
+                           su.user_name,
+                           an.delete_flag,
+                           ab.business_info,
+                           task_uuid,
+                           if(info.parent_task_node_uuid = '000000', true, false) p_flag
+                    from info
+                             left join ac_name an on info.ac_uuid = an.ac_uuid
+                             left join ac_node ann on an.id = ann.ac_name_id and an.delete_flag = ann.delete_flag
+                             left join ac_business ab on ann.id = ab.ac_node_id and an.delete_flag = ab.delete_flag
+                             left join sys_user su
+                                       on an.delete_flag = su.delete_flag and ab.business_info = su.user_card)
+        select node_name,
+               node_group,
+               user_name as business,
+               business_info,
+               submission_time,
+               ac.ac_uuid,
+               ac.p_flag,
+               ac_name_uuid,
+               review_progress,
+               pass_time,
+               flag,
+               this_flag,
+               status,
+               status_info
+        from ac
+                 left join ac_start ass
+                           on ac.delete_flag = ass.delete_flag and ac.ac_uuid = ass.ac_uuid and
+                              ac.node_name = ass.ac_node
+    </select>
+</mapper>

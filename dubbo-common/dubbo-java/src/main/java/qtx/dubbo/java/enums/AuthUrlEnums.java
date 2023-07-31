@@ -14,7 +14,7 @@ public enum AuthUrlEnums {
     /**
      * 放行地址:验证码
      */
-    SWAGGER_URL("/*/v3/api-docs", 1),
+    SWAGGER_URL("/v3/api-docs", 1),
     /**
      * 方形地址:文件
      */
@@ -42,7 +42,8 @@ public enum AuthUrlEnums {
     /**
      * 测试接口放行
      */
-    TEST("/sysUser/test", 0);
+    TEST("/sysUser/test", 0),
+    TEST1("/sysUser/test1", 0);
 
 
     private final String context;

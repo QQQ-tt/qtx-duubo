@@ -1,20 +1,22 @@
-package qtx.dubbo.model.entity.provider;
+package qtx.dubbo.model.entity.activity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import qtx.dubbo.model.base.BaseEntity;
 
 import java.io.Serializable;
 
+import lombok.*;
+import qtx.dubbo.model.base.BaseEntity;
+
 /**
+ * <p>
  * 流程节点业务表
+ * </p>
  *
  * @author qtx
- * @since 2023-03-30
+ * @since 2023-07-26
  */
 @Getter
 @Setter
@@ -22,18 +24,22 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("ac_business")
-public class AcBusiness extends BaseEntity implements Serializable {
+public class AcBusiness extends BaseEntity {
+
+    private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @Schema(description = "任务uuid")
     @TableField("ac_node_id")
     private Integer acNodeId;
 
     @TableField("ac_name_id")
     private Integer acNameId;
 
+    /**
+     * 实际关联业务(处理人或角色)
+     */
     @TableField("business_info")
     private String businessInfo;
 }

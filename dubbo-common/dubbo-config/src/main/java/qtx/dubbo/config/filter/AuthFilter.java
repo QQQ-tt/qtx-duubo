@@ -51,10 +51,10 @@ public class AuthFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
         String ip = request.getRemoteAddr();
+        commonMethod.setIp(ip);
 
         if (AuthUrlEnums.authPath(uri)) {
             RequestWrapper requestWrapper = getRequestWrapper(request, uri, null, ip);
-            commonMethod.setIp(ip);
             filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
             return;
         }
@@ -89,7 +89,6 @@ public class AuthFilter extends OncePerRequestFilter {
 
         RequestWrapper requestWrapper = getRequestWrapper(request, uri, userCode, ip);
         commonMethod.setUserCode(userCode);
-        commonMethod.setIp(ip);
 
         filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
     }
@@ -98,7 +97,7 @@ public class AuthFilter extends OncePerRequestFilter {
     private RequestWrapper getRequestWrapper(HttpServletRequest request, String uri, String userCode, String ip) throws IOException {
         RequestWrapper requestWrapper = null;
         String method = request.getMethod();
-        String json = null, param = null;
+        String json, param;
         if (!LogUrlEnums.logPath(uri)) {
             requestWrapper = new RequestWrapper(request);
             String s = JSON.toJSONString(requestWrapper.getBodyString());
@@ -111,20 +110,20 @@ public class AuthFilter extends OncePerRequestFilter {
                     uri,
                     json,
                     param);
-        }
-        try {
-            rocketMQUtils.sendAsyncMsg(RocketMQTopicEnums.Log_Normal, String.valueOf(System.currentTimeMillis()),
-                    JSON.toJSONString(
-                            LogBO.builder()
-                                    .userCode(userCode)
-                                    .method(method)
-                                    .path(uri)
-                                    .json(json)
-                                    .param(param)
-                                    .createBy(ip)
-                                    .build()));
-        } catch (ClientException e) {
-            throw new RuntimeException(e);
+            try {
+                rocketMQUtils.sendAsyncMsg(RocketMQTopicEnums.Log_Normal, String.valueOf(System.currentTimeMillis()),
+                        JSON.toJSONString(
+                                LogBO.builder()
+                                        .userCode(userCode)
+                                        .method(method)
+                                        .path(uri)
+                                        .json(json)
+                                        .param(param)
+                                        .createBy(ip)
+                                        .build()));
+            } catch (ClientException e) {
+                throw new RuntimeException(e);
+            }
         }
         return requestWrapper;
     }

@@ -1,14 +1,13 @@
 package qtx.dubbo.config.utils;
 
 import com.alibaba.fastjson.JSONArray;
-
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.java.Result;
 import qtx.dubbo.java.enums.DataEnums;
-
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,8 +20,15 @@ import java.io.PrintWriter;
 @Component
 public class CommonMethod {
 
+    /**
+     * 获取当前登录人userCode
+     */
     private String userCode;
 
+    /**
+     *  获取请求ip
+     */
+    @Getter
     private String ip;
 
 
@@ -46,6 +52,7 @@ public class CommonMethod {
         writer.flush();
     }
 
+
     /**
      * 获取当前登录人userCode
      *
@@ -55,12 +62,4 @@ public class CommonMethod {
         return userCode;
     }
 
-    /**
-     * 获取请求ip
-     *
-     * @return ip
-     */
-    public String getIp() {
-        return ip;
-    }
 }

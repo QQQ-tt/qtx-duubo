@@ -62,7 +62,7 @@ public class VerifyUtil {
      * Object[1]：验证码图片。
      */
     public Object[] createImage() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // 创建空白图片
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         // 获取图片画笔
@@ -93,7 +93,7 @@ public class VerifyUtil {
                 // 随机一个倾斜的角度 -45到45度之间
                 int theta = ran.nextInt(45);
                 // 随机一个倾斜方向 左或者右
-                theta = (ran.nextBoolean() == true) ? theta : -theta;
+                theta = (ran.nextBoolean()) ? theta : -theta;
                 AffineTransform affineTransform = new AffineTransform();
                 affineTransform.rotate(Math.toRadians(theta), 0, 0);
                 font = font.deriveFont(affineTransform);
@@ -130,8 +130,7 @@ public class VerifyUtil {
      */
     private Color getRandomColor() {
         Random ran = new Random();
-        Color color = new Color(ran.nextInt(256), ran.nextInt(256), ran.nextInt(256));
-        return color;
+        return new Color(ran.nextInt(256), ran.nextInt(256), ran.nextInt(256));
     }
 
     /**

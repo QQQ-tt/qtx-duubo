@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RpcException.class)
     public Result<String> dateException(RpcException e) {
-        log.info("RpcException:{}" + e.getMessage().toString());
+        log.info("RpcException:{}", e.getMessage());
         return Result.failed(e.getMessage(), e.getCode());
     }
 
