@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import qtx.dubbo.log.interfaces.apisix.ApiEntity;
 import qtx.dubbo.log.interfaces.apisix.plugins.Plugins;
-import qtx.dubbo.log.interfaces.apisix.plugins.ProxyRewrite;
+import qtx.dubbo.log.interfaces.apisix.plugins.impl.ProxyRewrite;
 
 import java.util.Arrays;
 import java.util.Collections;

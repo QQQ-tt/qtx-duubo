@@ -23,35 +23,16 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class DiyConsumer {
 
-    private final RocketMQUtils rocketMQUtils;
-
-    private final SysLogServiceImpl service;
-
-    public DiyConsumer(RocketMQUtils rocketMQUtils, SysLogServiceImpl service) {
-        this.rocketMQUtils = rocketMQUtils;
-        this.service = service;
-    }
-
     @SneakyThrows
     @PostConstruct
     public void initConsumer() {
-        logConsumer();
+        ConsumerContext.getConsumerInfoList().forEach(consumerInfo -> {
+            try {
+                consumerInfo.content();
+            } catch (ClientException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    @Async
-    public void logConsumer() throws ClientException {
-        CompletableFuture.completedFuture(rocketMQUtils.pushConsumer(RocketMQTopicEnums.Log_Normal,
-                RocketMQConsumerEnums.Log_consumer_group,
-                messageView -> {
-                    try {
-                        SysLog entity = RocketMQUtils.getEntity(messageView, SysLog.class);
-                        service.save(entity);
-                        log.info("Consume message successfully, messageId={}", messageView.getMessageId());
-                        return ConsumeResult.SUCCESS;
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return ConsumeResult.FAILURE;
-                    }
-                }));
-    }
 }

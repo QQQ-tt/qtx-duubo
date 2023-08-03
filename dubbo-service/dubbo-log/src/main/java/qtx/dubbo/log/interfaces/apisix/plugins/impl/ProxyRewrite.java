@@ -1,7 +1,9 @@
-package qtx.dubbo.log.interfaces.apisix.plugins;
+package qtx.dubbo.log.interfaces.apisix.plugins.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import qtx.dubbo.log.interfaces.apisix.plugins.Plugin;
+import qtx.dubbo.log.interfaces.apisix.plugins.Plugins;
 
 import java.util.List;
 
@@ -39,7 +41,7 @@ public class ProxyRewrite implements Plugin {
         }
 
         public Builder regexUri(List<String> regexUri) {
-            if (regexUri.size() > 2) {
+            if (regexUri.size() != 2) {
                 throw new RuntimeException("数据异常");
             }
             super.regexUri = regexUri;
