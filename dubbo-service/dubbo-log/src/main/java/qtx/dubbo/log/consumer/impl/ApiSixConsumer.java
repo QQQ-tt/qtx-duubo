@@ -27,8 +27,8 @@ public class ApiSixConsumer extends Consumer {
                     RocketMQConsumerEnums.Url_consumer_group,
                     messageView -> {
                         try {
-                            String entity = RocketMQUtils.getEntity(messageView, String.class);
-                            System.out.println(entity);
+                            String info = RocketMQUtils.getEntity(messageView, String.class);
+                            // todo 注册逻辑待实现
                             log.info("Consume message successfully, messageId={}", messageView.getMessageId());
                             return ConsumeResult.SUCCESS;
                         } catch (Exception e) {

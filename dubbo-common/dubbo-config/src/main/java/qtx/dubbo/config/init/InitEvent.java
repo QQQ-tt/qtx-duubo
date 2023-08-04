@@ -77,7 +77,7 @@ public class InitEvent {
                     Long setSize = redisUtils.getSetSize(getRedisKey());
                     try {
                         rocketMQUtils.sendMsg(RocketMQTopicEnums.Url_Transaction,
-                                String.valueOf(System.currentTimeMillis()), serviceName,
+                                serviceName + "-" + System.currentTimeMillis(), serviceName,
                                 messageView -> setSize != null && setSize > 0 ? TransactionResolution.COMMIT : TransactionResolution.ROLLBACK,
                                 "1");
                     } catch (ClientException e) {
