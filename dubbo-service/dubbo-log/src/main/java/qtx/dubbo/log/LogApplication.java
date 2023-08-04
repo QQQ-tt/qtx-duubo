@@ -5,6 +5,8 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
+import qtx.dubbo.log.consumer.ConsumerContext;
+import qtx.dubbo.log.consumer.ConsumerInfo;
 
 /**
  * @author qtx
@@ -18,6 +20,7 @@ public class LogApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(LogApplication.class);
+        ConsumerContext.getConsumerInfoList().forEach(ConsumerInfo::content);
     }
 
 }

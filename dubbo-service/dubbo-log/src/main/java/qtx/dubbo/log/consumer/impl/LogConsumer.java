@@ -24,23 +24,27 @@ public class LogConsumer extends Consumer {
     public LogConsumer(RocketMQUtils rocketMQUtils, SysLogServiceImpl service) {
         super(rocketMQUtils);
         this.service = service;
-        register();
     }
 
+
     @Override
-    public void content() throws ClientException {
-        rocketMQUtils.pushConsumer(RocketMQTopicEnums.Log_Normal,
-                RocketMQConsumerEnums.Log_consumer_group,
-                messageView -> {
-                    try {
-                        SysLog entity = RocketMQUtils.getEntity(messageView, SysLog.class);
-                        service.save(entity);
-                        log.info("Consume message successfully, messageId={}", messageView.getMessageId());
-                        return ConsumeResult.SUCCESS;
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        return ConsumeResult.FAILURE;
-                    }
-                });
+    public void content() {
+        try {
+            rocketMQUtils.pushConsumer(RocketMQTopicEnums.Log_Normal,
+                    RocketMQConsumerEnums.Log_consumer_group,
+                    messageView -> {
+                        try {
+                            SysLog entity = RocketMQUtils.getEntity(messageView, SysLog.class);
+                            service.save(entity);
+                            log.info("Consume message successfully, messageId={}", messageView.getMessageId());
+                            return ConsumeResult.SUCCESS;
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            return ConsumeResult.FAILURE;
+                        }
+                    });
+        } catch (ClientException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

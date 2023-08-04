@@ -8,8 +8,9 @@ import lombok.Getter;
  */
 @Getter
 public enum RocketMQTopicEnums {
-    TOPIC_TAG("主题","标签"),
-    Log_Normal("Log_Normal","log");
+    TOPIC_TAG("主题", "标签"),
+    Log_Normal("Log_Normal", "log"),
+    Url_Transaction("Url_Transaction", "url");
 
     /**
      * 主题

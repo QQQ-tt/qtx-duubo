@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.apis.ClientException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import qtx.dubbo.config.utils.CommonMethod;
@@ -40,7 +41,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private final RocketMQUtils rocketMQUtils;
 
-    public AuthFilter(CommonMethod commonMethod, RedisUtils redisUtils, RocketMQUtils rocketMQUtils) {
+    public AuthFilter(CommonMethod commonMethod, RedisUtils redisUtils, @Autowired(required = false) RocketMQUtils rocketMQUtils) {
         this.commonMethod = commonMethod;
         this.redisUtils = redisUtils;
         this.rocketMQUtils = rocketMQUtils;
@@ -111,16 +112,18 @@ public class AuthFilter extends OncePerRequestFilter {
                     json,
                     param);
             try {
-                rocketMQUtils.sendAsyncMsg(RocketMQTopicEnums.Log_Normal, String.valueOf(System.currentTimeMillis()),
-                        JSON.toJSONString(
-                                LogBO.builder()
-                                        .userCode(userCode)
-                                        .method(method)
-                                        .path(uri)
-                                        .json(json)
-                                        .param(param)
-                                        .createBy(ip)
-                                        .build()));
+                if (rocketMQUtils != null){
+                    rocketMQUtils.sendAsyncMsg(RocketMQTopicEnums.Log_Normal, String.valueOf(System.currentTimeMillis()),
+                            JSON.toJSONString(
+                                    LogBO.builder()
+                                            .userCode(userCode)
+                                            .method(method)
+                                            .path(uri)
+                                            .json(json)
+                                            .param(param)
+                                            .createBy(ip)
+                                            .build()));
+                }
             } catch (ClientException e) {
                 throw new RuntimeException(e);
             }

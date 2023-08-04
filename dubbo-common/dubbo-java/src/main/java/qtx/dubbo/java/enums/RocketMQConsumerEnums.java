@@ -10,7 +10,8 @@ import lombok.Getter;
 public enum RocketMQConsumerEnums {
 
     CONSUMER_GROUP_NAME("消费者组名称"),
-    Log_consumer_group("Log_consumer_group");
+    Log_consumer_group("Log_consumer_group"),
+    Url_consumer_group("Url_consumer_group");
 
     /**
      * 消费者组

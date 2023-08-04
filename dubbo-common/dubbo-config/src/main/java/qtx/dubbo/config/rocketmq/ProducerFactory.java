@@ -1,11 +1,12 @@
 package qtx.dubbo.config.rocketmq;
 
-import org.apache.rocketmq.client.apis.*;
+import org.apache.rocketmq.client.apis.ClientConfiguration;
+import org.apache.rocketmq.client.apis.ClientException;
+import org.apache.rocketmq.client.apis.ClientServiceProvider;
 import org.apache.rocketmq.client.apis.producer.Producer;
 import org.apache.rocketmq.client.apis.producer.ProducerBuilder;
 import org.apache.rocketmq.client.apis.producer.TransactionChecker;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentMap;
  * @since 2023/7/18
  */
 @Component
+@ConditionalOnProperty(name = "rocketmq.enable",havingValue = "true")
 public class ProducerFactory {
 
     private static final ConcurrentMap<String, Producer> PRODUCER = new ConcurrentHashMap<>(50);

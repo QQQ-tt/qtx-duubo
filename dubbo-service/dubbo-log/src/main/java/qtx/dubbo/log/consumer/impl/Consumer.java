@@ -16,6 +16,7 @@ public abstract class Consumer implements ConsumerInfo {
 
     public Consumer(RocketMQUtils rocketMQUtils) {
         this.rocketMQUtils = rocketMQUtils;
+        register();
     }
 
     protected void register() {

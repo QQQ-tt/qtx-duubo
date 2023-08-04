@@ -1,6 +1,5 @@
 package qtx.dubbo.log.consumer;
 
-import org.apache.rocketmq.client.apis.ClientException;
 import org.springframework.scheduling.annotation.Async;
 
 /**
@@ -10,5 +9,5 @@ import org.springframework.scheduling.annotation.Async;
 public interface ConsumerInfo {
 
     @Async
-    void content() throws ClientException;
+    void content();
 }

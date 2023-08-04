@@ -15,10 +15,12 @@ import org.apache.rocketmq.client.apis.producer.Producer;
 import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.apache.rocketmq.client.apis.producer.Transaction;
 import org.apache.rocketmq.client.apis.producer.TransactionChecker;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.config.rocketmq.ProducerFactory;
 import qtx.dubbo.java.enums.RocketMQConsumerEnums;
 import qtx.dubbo.java.enums.RocketMQTopicEnums;
+import qtx.dubbo.java.info.StaticConstant;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -33,6 +35,7 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "rocketmq.enable", havingValue = "true")
 public class RocketMQUtils {
 
     private final ProducerFactory producerFactory;
@@ -196,13 +199,13 @@ public class RocketMQUtils {
                 //设置消息Tag，用于消费端根据指定Tag过滤消息。
                 .setTag(rocketMQTopicEnums.getTag())
                 //设置自定义标记
-                .addProperty("Order", info)
+                .addProperty(StaticConstant.ROCKETMQ_KEY, info)
                 //消息体。
                 .setBody(messageBody.getBytes())
                 .build();
         try {
             //发送消息，需要关注发送结果，并捕获失败等异常。
-            SendReceipt sendReceipt = producer.send(message);
+            SendReceipt sendReceipt = producer.send(message, transaction);
             log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
         } catch (ClientException e) {
             log.error("Failed to send message", e);
@@ -213,9 +216,10 @@ public class RocketMQUtils {
 
     /**
      * 消费者
-     * @param rocketMQTopicEnums 消息类型
+     *
+     * @param rocketMQTopicEnums    消息类型
      * @param rocketMQConsumerEnums 消费者群组
-     * @param messageListener 监听器处理消费结果
+     * @param messageListener       监听器处理消费结果
      * @return 消费者对象
      * @throws ClientException 连接异常
      */
@@ -232,8 +236,9 @@ public class RocketMQUtils {
 
     /**
      * 转换成对象
+     *
      * @param messageView 消息
-     * @param tClass 目标对象类型
+     * @param tClass      目标对象类型
      * @return 转换结果
      */
     public static <T> T getEntity(MessageView messageView, Class<T> tClass) {
@@ -241,6 +246,9 @@ public class RocketMQUtils {
         byte[] bytes = new byte[body.remaining()];
         body.get(bytes);
         String s = new String(bytes, StandardCharsets.UTF_8);
+        if (tClass.isPrimitive() || tClass == String.class){
+            return (T) s;
+        }
         return JSONObject.parseObject(s, tClass);
     }
 }

@@ -20,10 +20,13 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisUtils {
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private final Integer timeOut = 60 * 10;
+
+    public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * 添加object类型
@@ -31,8 +34,9 @@ public class RedisUtils {
      *
      * @param msg string
      */
-    public void setMsg(String key, Object msg) {
-        redisTemplate.opsForValue().set(key, msg, timeOut, TimeUnit.MINUTES);
+    public void addMsg(String key, Object msg) {
+        redisTemplate.opsForValue()
+                .set(key, msg, timeOut, TimeUnit.MINUTES);
     }
 
     /**
@@ -41,30 +45,46 @@ public class RedisUtils {
      *
      * @param msg string
      */
-    public void setMsgDiyTimeOut(String key, Object msg, int timeOut, TimeUnit timeUnit) {
-        redisTemplate.opsForValue().set(key, msg, timeOut, timeUnit);
+    public void addMsgDiyTimeOut(String key, Object msg, int timeOut, TimeUnit timeUnit) {
+        redisTemplate.opsForValue()
+                .set(key, msg, timeOut, timeUnit);
     }
 
-    public void setHashMsg(String key, String hashKey, Object msg) {
-        redisTemplate.opsForHash().put(key, hashKey, msg);
+    public void addHashMsg(String key, String hashKey, Object msg) {
+        redisTemplate.opsForHash()
+                .put(key, hashKey, msg);
     }
 
-    public void setHashMsgAll(String key, Map<?, ?> msg) {
-        redisTemplate.opsForHash().putAll(key, msg);
+    public void addHashMsgAll(String key, Map<?, ?> msg) {
+        redisTemplate.opsForHash()
+                .putAll(key, msg);
     }
 
-    public void setHashMsgAllTimeOut(String key, Map<?, ?> msg, long timeOut, TimeUnit timeUnit) {
-        redisTemplate.opsForHash().putAll(key, msg);
+    public void addHashMsgAllTimeOut(String key, Map<?, ?> msg, long timeOut, TimeUnit timeUnit) {
+        redisTemplate.opsForHash()
+                .putAll(key, msg);
         redisTemplate.expire(key, timeOut, timeUnit);
     }
 
-    public void setHashMsgTimeOut(String key, String hashKey, Object msg, long timeOut, TimeUnit timeUnit) {
-        redisTemplate.opsForHash().put(key, hashKey, msg);
+    public void addHashMsgTimeOut(String key, String hashKey, Object msg, long timeOut, TimeUnit timeUnit) {
+        redisTemplate.opsForHash()
+                .put(key, hashKey, msg);
         redisTemplate.expire(key, timeOut, timeUnit);
+    }
+
+    public boolean addSetSource(String key, Object... objects) {
+        redisTemplate.opsForSet()
+                .add(key, objects);
+        return Boolean.TRUE.equals(redisTemplate.expire(key, timeOut, TimeUnit.SECONDS));
+    }
+
+    public Long getSetSize(String key){
+        return redisTemplate.opsForSet().size(key);
     }
 
     public Object getHashMsg(String key, String hashKey) {
-        return redisTemplate.opsForHash().get(key, hashKey);
+        return redisTemplate.opsForHash()
+                .get(key, hashKey);
     }
 
     /**
@@ -74,7 +94,8 @@ public class RedisUtils {
      * @return 键值map集合
      */
     public Map<Object, Object> getHashMsg(String key) {
-        return redisTemplate.opsForHash().entries(key);
+        return redisTemplate.opsForHash()
+                .entries(key);
     }
 
     /**
@@ -84,7 +105,8 @@ public class RedisUtils {
      * @return object
      */
     public Object getMsg(String key) {
-        return redisTemplate.opsForValue().get(key);
+        return redisTemplate.opsForValue()
+                .get(key);
     }
 
     /**
