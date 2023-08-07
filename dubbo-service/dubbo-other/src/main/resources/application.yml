@@ -1,6 +1,6 @@
 spring:
   application:
-    name: dubbo-log
+    name: dubbo-other
   cloud:
     nacos:
       config:
@@ -8,6 +8,6 @@ spring:
         namespace: 79ec2bf2-77da-40a4-a877-a05dcadea95d
   config:
     import:
-      - optional:nacos:dubbo-log.yaml?group=CLOUD_GROUP  # 监听 DEFAULT_GROUP:test.yml
+      - optional:nacos:dubbo-other.yaml?group=CLOUD_GROUP  # 监听 DEFAULT_GROUP:test.yml
 apisix:
   url: http://192.168.77.130:9180

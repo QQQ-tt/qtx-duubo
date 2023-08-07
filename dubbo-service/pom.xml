@@ -15,7 +15,7 @@
         <module>dubbo-provider</module>
         <module>dubbo-consumer</module>
         <module>dubbo-activity</module>
-        <module>dubbo-log</module>
+        <module>dubbo-other</module>
     </modules>
 
     <properties>

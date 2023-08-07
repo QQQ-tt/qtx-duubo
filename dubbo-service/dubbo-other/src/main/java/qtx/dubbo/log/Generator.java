@@ -20,7 +20,7 @@ public class Generator {
             new DataSourceConfig.Builder("jdbc:mysql://192.168.77.130:3306/cloud", "root", "123456qaz");
 
     public static void main(String[] args) {
-        String dubboName = "log";
+        String dubboName = "other";
         String path = "/dubbo-service/dubbo-" + dubboName;
         String projectPath = System.getProperty("user.dir");
 

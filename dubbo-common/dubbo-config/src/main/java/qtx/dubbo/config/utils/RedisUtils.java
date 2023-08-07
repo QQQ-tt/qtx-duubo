@@ -1,12 +1,9 @@
 package qtx.dubbo.config.utils;
 
-import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.net.URL;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -81,6 +78,20 @@ public class RedisUtils {
     public Long getSetSize(String key) {
         return redisTemplate.opsForSet()
                 .size(key);
+    }
+
+    public <E> Set<E> getSetValue(String key, Class<E> expectedClass) {
+        Set<Object> members = redisTemplate.opsForSet()
+                .members(key);
+        Set<E> result = new HashSet<>();
+        if (members != null){
+            for (Object member : members) {
+                if (expectedClass.isAssignableFrom(member.getClass())) {
+                    result.add(expectedClass.cast(member));
+                }
+            }
+        }
+        return result;
     }
 
     public Object getHashMsg(String key, String hashKey) {

@@ -16,10 +16,10 @@ import qtx.dubbo.log.consumer.ConsumerInfo;
 @MapperScan(basePackages = "qtx.dubbo.log.mapper")
 @EnableDubbo(scanBasePackages = "qtx.dubbo.log.impl")
 @SpringBootApplication(scanBasePackages = "qtx.dubbo")
-public class LogApplication {
+public class OtherApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LogApplication.class);
+        SpringApplication.run(OtherApplication.class);
         ConsumerContext.getConsumerInfoList().forEach(ConsumerInfo::content);
     }
 
