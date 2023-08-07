@@ -23,7 +23,7 @@ public class ApiEntity {
     /**
      * 请求地址
      */
-    private String url;
+    private String uri;
 
     /**
      * 请求类型

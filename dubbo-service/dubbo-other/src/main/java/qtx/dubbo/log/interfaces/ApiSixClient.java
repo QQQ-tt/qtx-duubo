@@ -18,5 +18,5 @@ import java.util.Map;
 public interface ApiSixClient {
 
     @PutExchange("/routes/{id}")
-    void addRoute(@RequestHeader Map<String,String> header, @PathVariable long id, @RequestBody ApiEntity entity);
+    String addRoute(@RequestHeader(name = "X-API-KEY") String key, @PathVariable long id, @RequestBody ApiEntity entity);
 }
