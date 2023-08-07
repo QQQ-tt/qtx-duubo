@@ -2,6 +2,7 @@ package qtx.dubbo.config.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.ClientServiceProvider;
@@ -186,7 +187,7 @@ public class RocketMQUtils {
      * @param messageBody        消息内容
      * @throws ClientException 连接异常
      */
-    public void sendMsg(RocketMQTopicEnums rocketMQTopicEnums, String key, String messageBody, TransactionChecker checker, String info) throws ClientException {
+    public void sendMsg(RocketMQTopicEnums rocketMQTopicEnums, String key, String messageBody, TransactionChecker checker, String info, Boolean flag) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
         Producer producer = producerFactory.getTransactionalInstance(checker, rocketMQTopicEnums.getTopic());
@@ -203,14 +204,20 @@ public class RocketMQUtils {
                 //消息体。
                 .setBody(messageBody.getBytes())
                 .build();
+        SendReceipt sendReceipt = null;
         try {
             //发送消息，需要关注发送结果，并捕获失败等异常。
-            SendReceipt sendReceipt = producer.send(message, transaction);
-            log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
+            sendReceipt = producer.send(message, transaction);
         } catch (ClientException e) {
             log.error("Failed to send message", e);
         }
-        transaction.commit();
+        if (flag) {
+            assert sendReceipt != null;
+            log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
+            transaction.commit();
+        } else {
+            transaction.rollback();
+        }
     }
 
 
@@ -246,7 +253,7 @@ public class RocketMQUtils {
         byte[] bytes = new byte[body.remaining()];
         body.get(bytes);
         String s = new String(bytes, StandardCharsets.UTF_8);
-        if (tClass.isPrimitive() || tClass == String.class){
+        if (tClass.isPrimitive() || tClass == String.class) {
             return (T) s;
         }
         return JSONObject.parseObject(s, tClass);

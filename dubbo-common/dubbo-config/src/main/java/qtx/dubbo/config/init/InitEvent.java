@@ -6,6 +6,7 @@ import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.producer.TransactionResolution;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -50,7 +51,6 @@ public class InitEvent {
         CompletableFuture.supplyAsync(() -> {
                     redisUtils.deleteByKey(getRedisKey());
                     Map<RequestMappingInfo, HandlerMethod> methodMap = requestMappingHandlerMapping.getHandlerMethods();
-                    List<UrlBO> list = new ArrayList<>();
                     methodMap.forEach((k, v) -> {
                         if (!"[]".equals(k.getMethodsCondition()
                                 .getMethods()
@@ -58,28 +58,37 @@ public class InitEvent {
                             assert k.getPathPatternsCondition() != null;
                             Set<PathPattern> set = k.getPathPatternsCondition()
                                     .getPatterns();
-                            set.forEach(e -> list.add(UrlBO.builder()
-                                    .serviceName(serviceName.split("-")[1])
-                                    .name(v.getMethod()
-                                            .getName())
-                                    .bean(v.getBean()
-                                            .toString())
-                                    .requestType(k.getMethodsCondition()
-                                            .getMethods()
-                                            .toString())
-                                    .url(e.getPatternString())
-                                    .build()));
+                            AntPathMatcher matcher = new AntPathMatcher();
+                            set.forEach(e -> {
+                                if (!(e == null || matcher.match("/v3/api-docs*", e.getPatternString()) ||
+                                        matcher.match("/v3/api-docs/*", e.getPatternString()) ||
+                                        matcher.match("/v3/api-docs.yaml/*", e.getPatternString()) ||
+                                        matcher.match("/swagger-ui.html", e.getPatternString()))) {
+                                    redisUtils.addSetSource(getRedisKey(), UrlBO.builder()
+                                            .serviceName(serviceName.split("-")[1])
+                                            .name(v.getMethod()
+                                                    .getName())
+                                            .bean(v.getBean()
+                                                    .toString())
+                                            .requestType(k.getMethodsCondition()
+                                                    .getMethods()
+                                                    .toString())
+                                            .url(e.getPatternString())
+                                            .build());
+                                }
+                            });
                         }
                     });
-                    return redisUtils.addSetSource(getRedisKey(), list);
+                    return 1;
                 })
                 .thenRunAsync(() -> {
                     Long setSize = redisUtils.getSetSize(getRedisKey());
                     try {
                         rocketMQUtils.sendMsg(RocketMQTopicEnums.Url_Transaction,
                                 serviceName + "-" + System.currentTimeMillis(), serviceName,
-                                messageView -> setSize != null && setSize > 0 ? TransactionResolution.COMMIT : TransactionResolution.ROLLBACK,
-                                "1");
+                                messageView -> serviceName.equals(redisUtils.getMsg(String.valueOf(
+                                        messageView.getMessageId()))) ? TransactionResolution.COMMIT : TransactionResolution.ROLLBACK,
+                                "1", setSize != null && setSize > 0);
                     } catch (ClientException e) {
                         throw new RuntimeException(e);
                     }

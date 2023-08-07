@@ -12,9 +12,10 @@ import java.util.stream.Stream;
  */
 public enum AuthUrlEnums {
     /**
-     * 放行地址:验证码
+     * 放行地址:swagger
      */
     SWAGGER_URL("/v3/api-docs", 1),
+    SWAGGER_URL1("/swagger-ui.html", 0),
     /**
      * 方形地址:文件
      */

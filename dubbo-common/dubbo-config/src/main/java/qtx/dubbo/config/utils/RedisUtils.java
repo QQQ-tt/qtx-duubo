@@ -22,7 +22,7 @@ public class RedisUtils {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    private final Integer timeOut = 60 * 10;
+    private final Integer TIMEOUT = 60 * 10;
 
     public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -34,9 +34,9 @@ public class RedisUtils {
      *
      * @param msg string
      */
-    public void addMsg(String key, Object msg) {
+    public void addMsg(String key, Object msg, Integer timeOut) {
         redisTemplate.opsForValue()
-                .set(key, msg, timeOut, TimeUnit.MINUTES);
+                .set(key, msg, timeOut != null ? timeOut : TIMEOUT, TimeUnit.SECONDS);
     }
 
     /**
@@ -75,11 +75,12 @@ public class RedisUtils {
     public boolean addSetSource(String key, Object... objects) {
         redisTemplate.opsForSet()
                 .add(key, objects);
-        return Boolean.TRUE.equals(redisTemplate.expire(key, timeOut, TimeUnit.SECONDS));
+        return Boolean.TRUE.equals(redisTemplate.expire(key, TIMEOUT, TimeUnit.SECONDS));
     }
 
-    public Long getSetSize(String key){
-        return redisTemplate.opsForSet().size(key);
+    public Long getSetSize(String key) {
+        return redisTemplate.opsForSet()
+                .size(key);
     }
 
     public Object getHashMsg(String key, String hashKey) {

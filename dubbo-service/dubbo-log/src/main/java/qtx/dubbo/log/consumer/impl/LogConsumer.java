@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
 import org.springframework.stereotype.Component;
+import qtx.dubbo.config.utils.RedisUtils;
 import qtx.dubbo.config.utils.RocketMQUtils;
 import qtx.dubbo.java.enums.RocketMQConsumerEnums;
 import qtx.dubbo.java.enums.RocketMQTopicEnums;
@@ -21,8 +22,8 @@ public class LogConsumer extends Consumer {
 
     private final SysLogService service;
 
-    public LogConsumer(RocketMQUtils rocketMQUtils, SysLogServiceImpl service) {
-        super(rocketMQUtils);
+    public LogConsumer(RocketMQUtils rocketMQUtils, RedisUtils redisUtils, SysLogServiceImpl service) {
+        super(rocketMQUtils, redisUtils);
         this.service = service;
     }
 

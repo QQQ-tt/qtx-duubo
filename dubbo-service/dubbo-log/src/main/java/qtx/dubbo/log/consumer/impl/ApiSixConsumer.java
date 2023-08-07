@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
 import org.springframework.stereotype.Component;
+import qtx.dubbo.config.utils.RedisUtils;
 import qtx.dubbo.config.utils.RocketMQUtils;
 import qtx.dubbo.java.enums.RocketMQConsumerEnums;
 import qtx.dubbo.java.enums.RocketMQTopicEnums;
@@ -16,8 +17,8 @@ import qtx.dubbo.java.enums.RocketMQTopicEnums;
 @Component
 public class ApiSixConsumer extends Consumer {
 
-    public ApiSixConsumer(RocketMQUtils rocketMQUtils) {
-        super(rocketMQUtils);
+    public ApiSixConsumer(RocketMQUtils rocketMQUtils, RedisUtils redisUtils) {
+        super(rocketMQUtils, redisUtils);
     }
 
     @Override
@@ -28,6 +29,7 @@ public class ApiSixConsumer extends Consumer {
                     messageView -> {
                         try {
                             String info = RocketMQUtils.getEntity(messageView, String.class);
+                            redisUtils.addMsg(String.valueOf(messageView.getMessageId()), info, null);
                             // todo 注册逻辑待实现
                             log.info("Consume message successfully, messageId={}", messageView.getMessageId());
                             return ConsumeResult.SUCCESS;
