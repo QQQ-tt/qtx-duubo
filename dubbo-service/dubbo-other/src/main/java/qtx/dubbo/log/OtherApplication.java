@@ -5,8 +5,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
-import qtx.dubbo.log.consumer.ConsumerContext;
-import qtx.dubbo.log.consumer.ConsumerInfo;
 
 /**
  * @author qtx
@@ -20,7 +18,5 @@ public class OtherApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(OtherApplication.class);
-        ConsumerContext.getConsumerInfoList().forEach(ConsumerInfo::content);
     }
-
 }
