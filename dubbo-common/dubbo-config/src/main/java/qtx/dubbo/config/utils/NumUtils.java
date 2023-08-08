@@ -4,8 +4,8 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * @author: QTX
- * @Since: 2022/8/31
+ * @author qtx
+ * @since 2022/8/31
  */
 public class NumUtils {
     /**
@@ -16,13 +16,13 @@ public class NumUtils {
      * @param end   区间结束数字
      * @return 数字字符串
      */
-    public static String numRandom(int size, int start, int end) {
+    public static long numRandom(int size, int start, int end) {
         Random random = new Random();
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < size; i++) {
             stringBuilder.append(random.nextInt(end - start) + start);
         }
-        return stringBuilder.toString();
+        return Long.parseLong(stringBuilder.toString());
     }
 
     /**
@@ -30,11 +30,14 @@ public class NumUtils {
      *
      * @return 数字字符串
      */
-    public static Integer numUserCard() {
-        return Integer.parseInt(numRandom(1, 1, 9) + numRandom(4, 0, 9));
+    public static long numUserCard() {
+        return numRandom(1, 1, 9) + numRandom(4, 0, 9);
     }
 
     public static String uuid() {
-        return UUID.randomUUID().toString().replace("-", "").toLowerCase();
+        return UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .toLowerCase();
     }
 }

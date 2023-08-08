@@ -9,3 +9,5 @@ spring:
   config:
     import:
       - optional:nacos:dubbo-provider.yaml?group=CLOUD_GROUP  # 监听 DEFAULT_GROUP:test.yml
+apisix:
+  upstream-id: 123

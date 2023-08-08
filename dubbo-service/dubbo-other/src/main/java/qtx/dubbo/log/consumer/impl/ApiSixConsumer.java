@@ -5,13 +5,18 @@ import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.config.init.bo.UrlBO;
+import qtx.dubbo.config.utils.NumUtils;
 import qtx.dubbo.config.utils.RedisUtils;
 import qtx.dubbo.config.utils.RocketMQUtils;
 import qtx.dubbo.java.enums.RocketMQConsumerEnums;
 import qtx.dubbo.java.enums.RocketMQTopicEnums;
 import qtx.dubbo.java.info.StaticConstant;
 import qtx.dubbo.log.interfaces.ApiSixClient;
+import qtx.dubbo.log.interfaces.apisix.ApiEntity;
+import qtx.dubbo.log.interfaces.apisix.Plugins;
+import qtx.dubbo.log.interfaces.apisix.plugins.ProxyRewrite;
 
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -38,7 +43,6 @@ public class ApiSixConsumer extends Consumer {
                         try {
                             String info = RocketMQUtils.getEntity(messageView, String.class);
                             redisUtils.addMsg(String.valueOf(messageView.getMessageId()), info, null);
-                            // todo 注册逻辑待实现
                             registerApi(getRedisKey(info));
                             log.info("Consume message successfully, messageId={}", messageView.getMessageId());
                             return ConsumeResult.SUCCESS;
@@ -54,7 +58,27 @@ public class ApiSixConsumer extends Consumer {
 
     public void registerApi(String redisKey) {
         Set<UrlBO> setValue = redisUtils.getSetValue(redisKey, UrlBO.class);
-        System.out.println(setValue);
+        setValue.forEach(e -> apiSixClient.addRoute("edd1c9f034335f136f87ad84b625c8f1", NumUtils.numRandom(20, 1, 9), ApiEntity.builder()
+                .uri("/" + e.getServiceName() + "/" + e.getUri())
+                .name(e.getServiceName() + "-" + e.getUri())
+                .methods(Arrays.asList("GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "PATCH",
+                        "HEAD",
+                        "OPTIONS",
+                        "CONNECT",
+                        "TRACE",
+                        "PURGE"))
+                .upstreamId(e.getUpstreamId())
+                .plugins(Plugins.builder()
+                        .proxyRewrite(ProxyRewrite.builder()
+                                .method(e.getRequestType())
+                                .regexUri(Arrays.asList("^/" + e.getServiceName() + "/(.*)$", "/$1"))
+                                .build())
+                        .build())
+                .build()));
     }
 
     public String getRedisKey(String info) {

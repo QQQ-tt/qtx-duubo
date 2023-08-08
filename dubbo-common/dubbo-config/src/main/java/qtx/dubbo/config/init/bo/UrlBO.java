@@ -25,7 +25,7 @@ public class UrlBO {
     /**
      * 请求地址
      */
-    private String url;
+    private String uri;
 
     /**
      * bean名字
@@ -36,4 +36,9 @@ public class UrlBO {
      * 请求类型
      */
     private String requestType;
+
+    /**
+     * 上游id
+     */
+    private String upstreamId;
 }

@@ -11,3 +11,4 @@ spring:
       - optional:nacos:dubbo-other.yaml?group=CLOUD_GROUP  # 监听 DEFAULT_GROUP:test.yml
 apisix:
   url: http://192.168.77.130:9180
+  upstream-id: 123
