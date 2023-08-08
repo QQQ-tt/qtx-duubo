@@ -8,12 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import qtx.dubbo.log.OtherApplication;
 import qtx.dubbo.log.interfaces.ApiSixClient;
 import qtx.dubbo.log.interfaces.apisix.ApiEntity;
-import qtx.dubbo.log.interfaces.apisix.plugins.Plugins;
-import qtx.dubbo.log.interfaces.apisix.plugins.impl.ProxyRewrite;
+import qtx.dubbo.log.interfaces.apisix.Plugins;
+import qtx.dubbo.log.interfaces.apisix.plugins.ProxyRewrite;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author qtx

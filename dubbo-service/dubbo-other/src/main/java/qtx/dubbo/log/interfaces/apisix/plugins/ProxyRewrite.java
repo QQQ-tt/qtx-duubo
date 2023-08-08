@@ -1,10 +1,10 @@
 package qtx.dubbo.log.interfaces.apisix.plugins;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-import qtx.dubbo.log.interfaces.apisix.plugins.impl.ProxyRewrite;
+
+import java.util.List;
 
 /**
  * @author qtx
@@ -12,8 +12,10 @@ import qtx.dubbo.log.interfaces.apisix.plugins.impl.ProxyRewrite;
  */
 @Data
 @Builder
-public class Plugins {
+public class ProxyRewrite {
 
-    @JsonProperty("proxy-rewrite")
-    private ProxyRewrite proxyRewrite;
+    private String method;
+
+    @JsonProperty("regex_uri")
+    private List<String> regexUri;
 }

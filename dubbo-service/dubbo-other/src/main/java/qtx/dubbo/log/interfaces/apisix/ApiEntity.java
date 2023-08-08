@@ -3,7 +3,6 @@ package qtx.dubbo.log.interfaces.apisix;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-import qtx.dubbo.log.interfaces.apisix.plugins.Plugins;
 
 import java.util.List;
 
