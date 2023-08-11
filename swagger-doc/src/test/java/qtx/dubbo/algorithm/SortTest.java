@@ -107,7 +107,7 @@ public class SortTest {
 
     /**
      * @param nums 数组
-     * @param k 第k大的数
+     * @param k    第k大的数
      * @return 结果
      */
     int findKthLargest(int[] nums, int k) {
@@ -115,6 +115,32 @@ public class SortTest {
                 .distinct()
                 .toArray();
         return quick_find(nums, 0, nums.length - 1, nums.length - k + 1);
+    }
+
+    int[] tmp;
+
+    void merge_sort(int[] q, int l, int r) {
+        if (l >= r) {
+            return;
+        }
+
+        int mid = (l + r) >> 1;
+
+        merge_sort(q, l, mid);
+        merge_sort(q, mid + 1, r);
+
+        int k = 0, i = l, j = mid + 1;
+
+        while (i <= mid && j <= r) {
+            if (q[i] <= q[j]) tmp[k++] = q[i++];
+            else tmp[k++] = q[j++];
+        }
+        while (i <= mid) tmp[k++] = q[i++];
+        while (j <= r) tmp[k++] = q[j++];
+
+        for (int m = l, n = 0; m < tmp.length; m++, n++) {
+            q[m] = tmp[n];
+        }
     }
 
 
