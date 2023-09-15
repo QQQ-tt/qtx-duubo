@@ -68,6 +68,10 @@ public class Result<T> {
         return new Result<>(msg, DataEnums.FAILED);
     }
 
+    public static <T> Result<T> failed(T data, String msg) {
+        return new Result<>(msg, DataEnums.FAILED.getCode(), data);
+    }
+
     public static <T> Result<T> failed(String msg, int code) {
         return new Result<>(code, msg);
     }
