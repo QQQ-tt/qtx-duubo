@@ -2,6 +2,7 @@ package qtx.dubbo.activity.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class AcNameController {
 
     @Operation(summary = "创建或更新流程")
     @PostMapping("/saveOrUpdateCa")
-    public Result<String> saveOrUpdateCa(@RequestBody ActivityDTO dto) {
+    public Result<String> saveOrUpdateCa(@RequestBody @Valid ActivityDTO dto) {
         return Result.success(acNameService.saveOrUpdateAc(dto));
     }
 }

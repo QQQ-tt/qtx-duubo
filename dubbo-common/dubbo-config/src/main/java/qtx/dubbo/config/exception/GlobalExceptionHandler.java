@@ -1,12 +1,9 @@
 package qtx.dubbo.config.exception;
 
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.rpc.RpcException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Result<String>> nullException(NullPointerException e) {
         log.error("空指针异常");
-        return new ResponseEntity<>(Result.failed("空指针异常"), HttpStatusCode.valueOf(500));
+        return new ResponseEntity<>(Result.failed("空指针异常"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(RpcException.class)
