@@ -20,9 +20,14 @@
     <dependencies>
         <dependency>
             <groupId>spring-dubbo</groupId>
-            <artifactId>dubbo-config</artifactId>
+            <artifactId>dubbo-security</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>spring-dubbo</groupId>-->
+<!--            <artifactId>dubbo-config</artifactId>-->
+<!--            <version>1.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>spring-dubbo</groupId>
             <artifactId>dubbo-java</artifactId>

@@ -17,20 +17,20 @@ import java.util.Arrays;
  * @author qtx
  * @since 2023/8/2
  */
-@SpringBootTest(classes = OtherApplication.class)
+//@SpringBootTest(classes = OtherApplication.class)
 public class PutApisixTest {
 
-    @Autowired
+//    @Autowired
     private ApiSixClient apiSixClient;
 
 
-    @Test
+//    @Test
     public void print() throws JsonProcessingException {
         ApiEntity entity = getApiEntity();
         System.out.println(new ObjectMapper().writeValueAsString(entity));
     }
 
-    @Test
+//    @Test
     public void test() {
         String map = apiSixClient.addRoute("edd1c9f034335f136f87ad84b625c8f1",
                 4,

@@ -91,5 +91,12 @@
             <artifactId>rocketmq-client-java</artifactId>
             <version>5.0.5</version>
         </dependency>
+        <!-- guava工具 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>32.1.2-jre</version>
+        </dependency>
+
     </dependencies>
 </project>
