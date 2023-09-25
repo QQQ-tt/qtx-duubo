@@ -33,7 +33,7 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
     private final RedisUtils redisUtils;
 
-    public JwtAuthTokenFilter(CommonMethod commonMethod, RedisUtils redisUtils, AuthenticationManager authenticationManager) {
+    public JwtAuthTokenFilter(CommonMethod commonMethod, RedisUtils redisUtils) {
         this.commonMethod = commonMethod;
         this.redisUtils = redisUtils;
     }

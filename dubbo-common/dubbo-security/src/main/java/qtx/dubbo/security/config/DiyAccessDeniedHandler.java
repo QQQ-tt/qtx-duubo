@@ -14,8 +14,8 @@ import qtx.dubbo.java.enums.DataEnums;
 import java.io.IOException;
 
 /**
- * @author: QTX
- * @Since: 2022/8/31
+ * @author qtx
+ * @since 2022/8/31
  */
 @Component
 @Slf4j

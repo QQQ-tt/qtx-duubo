@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * url权限校验
  *
  * @author qtx
- * @date 2022/9/6 23:16
+ * @since 2022/9/6 23:16
  */
 @Component
 public class DiyAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
@@ -26,11 +26,6 @@ public class DiyAuthorizationManager implements AuthorizationManager<RequestAuth
                 .getAuthorities();
         String path = object.getRequest()
                 .getServletPath();
-        String login = "/report/sysUser/login";
-        String createUser = "/report/sysUser/createUser";
-        if (login.equals(path) || createUser.equals(path)) {
-            return new AuthorizationDecision(true);
-        }
         return new AuthorizationDecision(true);
 //        return new AuthorizationDecision(roleUrlTask.getAuth(collection, path));
     }
