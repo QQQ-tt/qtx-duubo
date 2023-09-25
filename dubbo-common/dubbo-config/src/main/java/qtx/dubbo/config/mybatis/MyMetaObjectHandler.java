@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.config.utils.CommonMethod;
 
@@ -27,7 +26,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         log.info("start insert fill ....");
-        String user = commonMethod.getUser();
+        String user = commonMethod.getUserCode();
         if (StringUtils.isBlank(user)) {
             user = commonMethod.getIp();
             if (StringUtils.isBlank(user)){
@@ -42,7 +41,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         log.info("start update fill ....");
-        String user = commonMethod.getUser();
+        String user = commonMethod.getUserCode();
         if (StringUtils.isBlank(user)) {
             user = commonMethod.getIp();
             if (StringUtils.isBlank(user)){

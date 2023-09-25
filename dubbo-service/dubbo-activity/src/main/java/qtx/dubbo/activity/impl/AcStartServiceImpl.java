@@ -69,7 +69,7 @@ public class AcStartServiceImpl extends ServiceImpl<AcStartMapper, AcStart> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateAc(AcStartUpdateDTO dto) {
-        String user = commonMethod.getUser();
+        String user = commonMethod.getUserCode();
         // 查询当前节点
         AcStart one =
                 getOne(
@@ -159,7 +159,7 @@ public class AcStartServiceImpl extends ServiceImpl<AcStartMapper, AcStart> impl
 
     @Override
     public List<AcToDoVO> toDo(String acUuid, String userCard) {
-        return baseMapper.selectToDo(acUuid, userCard != null ? userCard : commonMethod.getUser());
+        return baseMapper.selectToDo(acUuid, userCard != null ? userCard : commonMethod.getUserCode());
     }
 
     @Override

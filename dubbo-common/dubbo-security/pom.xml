@@ -18,7 +18,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>spring-dubbo</groupId>
             <artifactId>dubbo-config</artifactId>

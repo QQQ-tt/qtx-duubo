@@ -17,6 +17,7 @@ import java.io.PrintWriter;
  * @since 2022/11/2
  */
 @Setter
+@Getter
 @Component
 public class CommonMethod {
 
@@ -28,8 +29,12 @@ public class CommonMethod {
     /**
      *  获取请求ip
      */
-    @Getter
     private String ip;
+
+    /**
+     * 请求地址
+     */
+    private String uri;
 
 
     /**
@@ -50,16 +55,6 @@ public class CommonMethod {
                 .toString();
         writer.write(s);
         writer.flush();
-    }
-
-
-    /**
-     * 获取当前登录人userCode
-     *
-     * @return userCode
-     */
-    public String getUser() {
-        return userCode;
     }
 
 }

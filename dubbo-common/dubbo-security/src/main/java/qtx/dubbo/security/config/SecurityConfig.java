@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import qtx.dubbo.security.filter.JwtAuthTokenFilter;
+import qtx.dubbo.security.provider.JwtAuthenticationProvider;
 import qtx.dubbo.security.userdetails.UserDetailsServiceImpl;
 
 /**
@@ -33,15 +34,14 @@ public class SecurityConfig {
 
     private final JwtAuthTokenFilter jwtAuthTokenFilter;
 
-    private final DaoAuthenticationProvider daoAuthenticationProvider;
-
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService, DiyAccessDeniedHandler accessDeniedHandler, DiyAuthenticationEntryPoint authenticationEntryPoint, DiyAuthorizationManager authorizationManager, JwtAuthTokenFilter jwtAuthTokenFilter, DaoAuthenticationProvider daoAuthenticationProvider) {
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, DiyAccessDeniedHandler accessDeniedHandler,
+                          DiyAuthenticationEntryPoint authenticationEntryPoint,
+                          DiyAuthorizationManager authorizationManager, JwtAuthTokenFilter jwtAuthTokenFilter) {
         this.userDetailsService = userDetailsService;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authorizationManager = authorizationManager;
         this.jwtAuthTokenFilter = jwtAuthTokenFilter;
-        this.daoAuthenticationProvider = daoAuthenticationProvider;
     }
 
     @Bean
@@ -64,11 +64,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth.anyRequest()
                         .access(authorizationManager))
                 .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .authenticationProvider(daoAuthenticationProvider).authenticationProvider()
-                .userDetailsService(userDetailsService)
+                .authenticationProvider(daoAuthenticationProvider())
+                .authenticationProvider(new JwtAuthenticationProvider())
                 .cors();
         return http.build();
     }
 
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
+    }
 
 }

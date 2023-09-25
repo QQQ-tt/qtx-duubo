@@ -6,11 +6,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.exception.DataException;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author qtx
@@ -37,7 +38,7 @@ public class JwtUtils {
      * @param username 加密字符
      * @return token
      */
-    public static String generateToken(String username) {
+    public static String generateToken(String username, Map<String, Object> claims) {
         Date now = new Date();
         return Jwts.builder()
                 .setSubject(username)
@@ -45,6 +46,7 @@ public class JwtUtils {
                 .setExpiration(new Date(now.getTime() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .setIssuer(ISSUER)
+                .setClaims(claims)
                 .compact();
     }
 
@@ -54,7 +56,7 @@ public class JwtUtils {
      * @param token 加密字符串
      * @return 用户信息
      */
-    public static String getUsernameFromToken(String token) {
+    public static String getBodyFromToken(String token) {
         if (StringUtils.isBlank(token)) {
             new DataException(DataEnums.DATA_IS_ABNORMAL);
         }
@@ -69,7 +71,27 @@ public class JwtUtils {
     }
 
     /**
+     * 解密信息
+     *
+     * @param token 加密字符串
+     * @return 用户信息
+     */
+    public static Claims getClaimsFromToken(String token) {
+        if (StringUtils.isBlank(token)) {
+            new DataException(DataEnums.DATA_IS_ABNORMAL);
+        }
+        if (getIssuerFromToken(token).equals(ISSUER)) {
+            return Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+        }
+        return null;
+    }
+
+    /**
      * 获取签发人
+     *
      * @param token 加密信息
      * @return 签发人
      */
@@ -83,6 +105,7 @@ public class JwtUtils {
 
     /**
      * 判断token合法性
+     *
      * @param token 加密信息
      * @return 是否合法
      */
@@ -104,8 +127,11 @@ public class JwtUtils {
      * @return 新的加密信息
      */
     public static String refreshToken(String token) {
-        String username = getUsernameFromToken(token);
-        return generateToken(username);
+        String username = getBodyFromToken(token);
+        Claims claims = getClaimsFromToken(token);
+        assert claims != null;
+        HashMap<String, Object> map = new HashMap<>(claims);
+        return generateToken(username, map);
     }
 
     /**
