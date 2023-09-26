@@ -82,8 +82,10 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
         commonMethod.setUserCode(userCode);
         String ip = request.getRemoteAddr();
         commonMethod.setIp(ip);
+        UsernamePasswordAuthenticationToken unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(
+                userCode, token);
         SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(userCode, token));
+        context.setAuthentication(unauthenticated);
         SecurityContextHolder.setContext(context);
         filterChain.doFilter(request, response);
     }
