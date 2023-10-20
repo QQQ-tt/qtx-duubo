@@ -1,10 +1,10 @@
 package qtx.dubbo.log.consumer.impl;
 
 import org.springframework.stereotype.Component;
-import qtx.dubbo.config.utils.RedisUtils;
-import qtx.dubbo.config.utils.RocketMQUtils;
 import qtx.dubbo.log.consumer.ConsumerContext;
 import qtx.dubbo.log.consumer.ConsumerInfo;
+import qtx.dubbo.redis.util.RedisUtils;
+import qtx.dubbo.rocketmq.util.RocketMQUtils;
 
 /**
  * @author qtx

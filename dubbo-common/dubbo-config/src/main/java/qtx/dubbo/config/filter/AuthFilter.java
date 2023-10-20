@@ -9,14 +9,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.apis.ClientException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
-import qtx.dubbo.config.utils.CommonMethod;
-import qtx.dubbo.config.utils.RocketMQUtils;
+import qtx.dubbo.config.bo.LogBO;
+import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.AuthUrlEnums;
 import qtx.dubbo.java.enums.LogUrlEnums;
-import qtx.dubbo.java.enums.RocketMQTopicEnums;
+import qtx.dubbo.rocketmq.enums.RocketMQTopicEnums;
 
 import java.io.IOException;
 
@@ -31,11 +30,8 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private final CommonMethod commonMethod;
 
-    private final RocketMQUtils rocketMQUtils;
-
-    public AuthFilter(CommonMethod commonMethod, @Autowired(required = false) RocketMQUtils rocketMQUtils) {
+    public AuthFilter(CommonMethod commonMethod) {
         this.commonMethod = commonMethod;
-        this.rocketMQUtils = rocketMQUtils;
     }
 
     @Override
@@ -74,23 +70,23 @@ public class AuthFilter extends OncePerRequestFilter {
                     uri,
                     json,
                     param);
-            try {
-                if (rocketMQUtils != null){
-                    rocketMQUtils.sendAsyncMsg(RocketMQTopicEnums.Log_Normal, String.valueOf(System.currentTimeMillis()),
-                            JSON.toJSONString(
-                                    LogBO.builder()
-                                            .userCode(userCode)
-                                            .method(method)
-                                            .path(uri)
-                                            .json(json)
-                                            .param(param)
-                                            .createBy(ip)
-                                            .build()));
-                }
-            } catch (ClientException e) {
-                throw new RuntimeException(e);
-            }
+            setLogBO(LogBO.builder()
+                    .userCode(userCode)
+                    .method(method)
+                    .path(uri)
+                    .json(json)
+                    .param(param)
+                    .createBy(ip)
+                    .build());
         }
         return requestWrapper;
+    }
+
+    public void setLogBO(LogBO logBO){
+        LogBO.logBOThreadLocal.set(logBO);
+    }
+
+    public void removeLogBO(){
+        LogBO.logBOThreadLocal.remove();
     }
 }

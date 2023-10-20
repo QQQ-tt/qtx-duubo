@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dubbo-security</artifactId>
+    <artifactId>dubbo-rocketmq</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -18,25 +18,16 @@
     </properties>
 
     <dependencies>
+        <!-- 消息队列 -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client-java</artifactId>
+            <version>5.0.5</version>
+        </dependency>
         <dependency>
             <groupId>spring-dubbo</groupId>
             <artifactId>dubbo-java</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>spring-dubbo</groupId>
-            <artifactId>dubbo-redis</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <!-- jwt密码加解密 -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
     </dependencies>
 </project>

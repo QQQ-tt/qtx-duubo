@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
 import org.springframework.stereotype.Component;
-import qtx.dubbo.config.utils.RedisUtils;
-import qtx.dubbo.config.utils.RocketMQUtils;
-import qtx.dubbo.java.enums.RocketMQConsumerEnums;
-import qtx.dubbo.java.enums.RocketMQTopicEnums;
 import qtx.dubbo.log.impl.SysLogServiceImpl;
 import qtx.dubbo.model.entity.log.SysLog;
+import qtx.dubbo.redis.util.RedisUtils;
+import qtx.dubbo.rocketmq.enums.RocketMQConsumerEnums;
+import qtx.dubbo.rocketmq.enums.RocketMQTopicEnums;
+import qtx.dubbo.rocketmq.util.RocketMQUtils;
 import qtx.dubbo.service.log.SysLogService;
 
 /**

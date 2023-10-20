@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import qtx.dubbo.config.utils.CommonMethod;
+import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.DataEnums;
 
 import java.io.IOException;
