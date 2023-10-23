@@ -13,7 +13,7 @@ public class ListTest {
     private static final String TEST = "2";
 
     @Test
-    public void test1(){
+    public void test1() {
         List<String> strings = initList();
         strings.removeIf(TEST::equals);
         System.out.println(strings);
@@ -23,17 +23,17 @@ public class ListTest {
      * 错误示范
      */
     @Test
-    public void test2(){
+    public void test2() {
         List<String> strings = initList();
         for (String s : strings) {
-            if (TEST.equals(s)){
+            if (TEST.equals(s)) {
                 strings.remove(s);
             }
         }
         System.out.println(strings);
     }
 
-    private List<String> initList(){
+    private List<String> initList() {
         ArrayList<String> list = new ArrayList<>();
         list.add("1");
         list.add("2");

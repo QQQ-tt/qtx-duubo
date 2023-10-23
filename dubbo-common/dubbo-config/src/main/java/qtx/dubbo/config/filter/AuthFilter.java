@@ -8,14 +8,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.apis.ClientException;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import qtx.dubbo.config.bo.LogBO;
 import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.AuthUrlEnums;
 import qtx.dubbo.java.enums.LogUrlEnums;
-import qtx.dubbo.rocketmq.enums.RocketMQTopicEnums;
 
 import java.io.IOException;
 
@@ -84,9 +82,5 @@ public class AuthFilter extends OncePerRequestFilter {
 
     public void setLogBO(LogBO logBO){
         LogBO.logBOThreadLocal.set(logBO);
-    }
-
-    public void removeLogBO(){
-        LogBO.logBOThreadLocal.remove();
     }
 }

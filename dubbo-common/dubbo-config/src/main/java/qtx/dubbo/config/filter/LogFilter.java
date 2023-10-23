@@ -35,9 +35,10 @@ public class LogFilter extends OncePerRequestFilter {
     @SneakyThrows
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) {
         rocketMQUtils.sendAsyncMsg(RocketMQTopicEnums.Log_Normal, String.valueOf(System.currentTimeMillis()),
                 JSON.toJSONString(LogBO.logBOThreadLocal.get()));
+        LogBO.logBOThreadLocal.remove();
         filterChain.doFilter(request, response);
     }
 }
