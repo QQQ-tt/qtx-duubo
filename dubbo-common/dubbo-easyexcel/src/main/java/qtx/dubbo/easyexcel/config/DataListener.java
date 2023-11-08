@@ -17,15 +17,15 @@ import java.util.*;
  * @since 2022/10/30 20:00
  */
 @Slf4j
-public class DataListener<E> implements ReadListener<E> {
+public class DataListener<I extends O, O> implements ReadListener<I> {
     /** 每隔5条存储数据库，实际使用中可以100条，然后清理list ，方便内存回收 */
     private static final int BATCH_COUNT = 10000;
     /** 缓存的数据 */
-    private List<E> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+    private List<I> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
     /** 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。 */
-    private final IService<E> service;
+    private final IService<O> service;
     /** excel数据与table不一致，手动实现转换方法 */
-    private ConvertList<E> convert;
+    private ConvertList<I, O> convert;
     /**
      * 错误标识
      */
@@ -40,7 +40,7 @@ public class DataListener<E> implements ReadListener<E> {
      *
      * @param service
      */
-    public DataListener(IService<E> service, Class<?> aClass) {
+    public DataListener(IService<O> service, Class<?> aClass) {
         this.service = service;
         this.entity = aClass;
     }
@@ -51,7 +51,7 @@ public class DataListener<E> implements ReadListener<E> {
      * @param service
      * @param convert
      */
-    public DataListener(IService<E> service, ConvertList<E> convert, Class<?> aClass) {
+    public DataListener(IService<O> service, ConvertList<I, O> convert, Class<?> aClass) {
         this.service = service;
         this.convert = convert;
         this.entity = aClass;
@@ -68,7 +68,7 @@ public class DataListener<E> implements ReadListener<E> {
      * @param context
      */
     @Override
-    public void invoke(E data, AnalysisContext context) {
+    public void invoke(I data, AnalysisContext context) {
         log.info("解析到一条数据:{}", JSON.toJSONString(data));
         try {
             if (isNull(data)) {
@@ -121,23 +121,32 @@ public class DataListener<E> implements ReadListener<E> {
 
     /** 加上存储数据库 */
     private void saveData() {
-        List<E> saveList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
-        Set<E> asList;
+        List<O> saveListO = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+        List<I> saveListI = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+        Set<I> asList;
         if (convert != null) {
             log.info("{}条数据，开始转换数据格式。", cachedDataList.size());
-            saveList.addAll(new HashSet<>(convert.convert(cachedDataList)));
+            saveListO.addAll(new HashSet<>(convert.convert(cachedDataList)));
         } else {
-            Set<E> set = new HashSet<>(service.query().eq("delete_flag", "0").list());
+            Set<O> existingData = new HashSet<>(service.query()
+                    .eq("delete_flag", "0")
+                    .list());
             asList = new HashSet<>(cachedDataList);
-            asList.forEach(s -> {
-                if (!set.contains(s)) {
-                    saveList.add(s);
+            for (I i : asList) {
+                if (i != null) {
+                    if (!existingData.contains(i)) {
+                        saveListI.add(i);
+                    }
                 }
-            });
-            log.info("{}条数据，被过滤掉！", cachedDataList.size() - saveList.size());
+            }
+            log.info("{}条数据，被过滤掉！", cachedDataList.size() - saveListO.size() - saveListI.size());
         }
-        log.info("{}条数据，开始存储数据库！", saveList.size());
-        service.saveBatch(saveList);
+        log.info("{}条数据，开始存储数据库！", saveListO.size() + saveListI.size());
+        if (convert != null) {
+            service.saveBatch(saveListO);
+        } else {
+            service.saveBatch((List<O>) saveListI);
+        }
         log.info("存储数据库成功！");
     }
 
@@ -149,7 +158,7 @@ public class DataListener<E> implements ReadListener<E> {
      *
      * @throws IllegalAccessException
      */
-    private boolean isNull(E data) throws IllegalAccessException {
+    private boolean isNull(I data) throws IllegalAccessException {
         Class<?> aClass = data.getClass();
         Field[] fields = aClass.getDeclaredFields();
         int num = 0;
