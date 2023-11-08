@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Data
 @Component
 @ConfigurationProperties(prefix = "excel.model")
-public class ExcelTransfer<T> {
+public class ExcelTransfer<I extends O, O> {
 
     private String packageName;
 
@@ -47,13 +48,15 @@ public class ExcelTransfer<T> {
      *
      * @throws ClassNotFoundException
      */
-    public boolean importExcel(MultipartFile file, IService<T> service) throws ClassNotFoundException {
+    public boolean importExcel(MultipartFile file, IService<O> service) throws ClassNotFoundException {
         isEmpty(file);
         String name = service.getClass().getName();
         String s = name.substring(size, name.length() - 11);
         Class<?> aClass = Class.forName(packageName + s);
         try {
-            EasyExcel.read(file.getInputStream(), aClass, new DataListener<>(service, aClass)).sheet().doRead();
+            EasyExcel.read(file.getInputStream(), aClass, new DataListener<I, O>(service, aClass))
+                    .sheet()
+                    .doRead();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             return false;
@@ -73,13 +76,15 @@ public class ExcelTransfer<T> {
      *
      * @throws ClassNotFoundException 为找到对应的类
      */
-    public boolean importExcel(MultipartFile file, IService<T> service, ConvertList<T> list) throws ClassNotFoundException {
+    public boolean importExcel(MultipartFile file, IService<O> service, ConvertList<I, O> list) throws ClassNotFoundException {
         isEmpty(file);
         String name = service.getClass().getName();
         String s = name.substring(size, name.length() - 11);
         Class<?> aClass = Class.forName(packageName + s);
         try {
-            EasyExcel.read(file.getInputStream(), aClass, new DataListener<>(service, list, aClass)).sheet().doRead();
+            EasyExcel.read(file.getInputStream(), aClass, new DataListener<>(service, list, aClass))
+                    .sheet()
+                    .doRead();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             return false;

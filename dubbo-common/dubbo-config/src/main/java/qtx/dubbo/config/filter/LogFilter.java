@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 import qtx.dubbo.config.bo.LogBO;
@@ -24,6 +25,7 @@ import java.io.IOException;
 @Slf4j
 @Order(2)
 @WebFilter("/*")
+@ConditionalOnProperty(name = "rocketmq.enable",havingValue = "true")
 public class LogFilter extends OncePerRequestFilter {
 
     private final RocketMQUtils rocketMQUtils;

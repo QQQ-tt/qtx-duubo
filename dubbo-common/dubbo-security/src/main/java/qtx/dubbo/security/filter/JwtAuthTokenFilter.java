@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import org.apache.dubbo.common.utils.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,7 @@ import java.util.Map;
  * @since 2023/9/23 23:02
  */
 @Component
+@ConditionalOnProperty(name = "spring.security", havingValue = "true")
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
     private final CommonMethod commonMethod;

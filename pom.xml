@@ -10,6 +10,14 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <profiles>
+        <profile>
+            <id>jdk-17</id>
+            <activation>
+                <jdk>17</jdk>
+            </activation>
+        </profile>
+    </profiles>
 
     <groupId>spring-dubbo</groupId>
     <artifactId>qtx-dubbo</artifactId>

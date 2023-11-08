@@ -1,5 +1,6 @@
 package qtx.dubbo.security.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import java.util.function.Supplier;
  * @since 2022/9/6 23:16
  */
 @Component
+@ConditionalOnProperty(name = "spring.security", havingValue = "true")
 public class DiyAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
 

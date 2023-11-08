@@ -1,5 +1,6 @@
 package qtx.dubbo.security.userdetails;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.util.Objects;
  * @since 2023/9/23 22:26
  */
 @Component
+@ConditionalOnProperty(name = "spring.security", havingValue = "true")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final RedisUtils redisUtils;
