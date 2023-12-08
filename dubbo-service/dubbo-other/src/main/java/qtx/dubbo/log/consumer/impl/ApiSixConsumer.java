@@ -3,6 +3,7 @@ package qtx.dubbo.log.consumer.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
+import org.apache.rocketmq.client.apis.consumer.PushConsumer;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.apisix.bo.UrlBO;
 import qtx.dubbo.config.utils.NumUtils;
@@ -16,6 +17,7 @@ import qtx.dubbo.rocketmq.enums.RocketMQConsumerEnums;
 import qtx.dubbo.rocketmq.enums.RocketMQTopicEnums;
 import qtx.dubbo.rocketmq.util.RocketMQUtils;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -36,8 +38,8 @@ public class ApiSixConsumer extends Consumer {
 
     @Override
     public void content() {
-        try {
-            rocketMQUtils.pushConsumer(RocketMQTopicEnums.Url_Transaction,
+
+            try (PushConsumer consumer = rocketMQUtils.pushConsumer(RocketMQTopicEnums.Url_Transaction,
                     RocketMQConsumerEnums.Url_consumer_group,
                     messageView -> {
                         try {
@@ -50,10 +52,13 @@ public class ApiSixConsumer extends Consumer {
                             log.error(e.getMessage());
                             return ConsumeResult.FAILURE;
                         }
-                    });
-        } catch (ClientException e) {
-            throw new RuntimeException(e);
-        }
+                    })){
+                String consumerGroup = consumer.getConsumerGroup();
+            } catch (IOException | ClientException e) {
+                throw new RuntimeException(e);
+            }
+
+
     }
 
     public void registerApi(String redisKey) {
