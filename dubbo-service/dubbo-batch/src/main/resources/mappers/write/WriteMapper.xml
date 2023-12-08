@@ -6,5 +6,12 @@
         INSERT INTO `write` (`name`, `code`)
         VALUES (#{name}, #{code})
     </insert>
+    <insert id="inertBatchWrite" parameterType="java.util.List">
+        INSERT INTO `write` (`name`, `code`)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name}, #{item.code})
+        </foreach>
+    </insert>
 
 </mapper>

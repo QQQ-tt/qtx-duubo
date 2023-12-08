@@ -47,7 +47,9 @@ public class TestItem {
         return new MyBatisBatchItemWriterBuilder<Write>()
                 .sqlSessionFactory(writeSqlSessionFactory)
                 .sqlSessionTemplate(sqlSessionTemplate)
-                .statementId("com.example.batch.mapper.write.WriteMapper.inertWrite")
+//                .statementId("com.example.batch.mapper.write.WriteMapper.inertWrite")
+                .statementId("com.example.batch.mapper.write.WriteMapper.inertBatchWrite")
+                .assertUpdates(Boolean.TRUE)
                 .build();
     }
 
