@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import qtx.dubbo.model.entity.batch.write.Write;
 
+import java.util.List;
+
 /**
  * <p>
  * 写 Mapper 接口
@@ -17,5 +19,7 @@ import qtx.dubbo.model.entity.batch.write.Write;
 public interface WriteMapper extends BaseMapper<Write> {
 
     int inertWrite(Write item);
+
+    int inertBatchWrite(List<Write> item);
 
 }

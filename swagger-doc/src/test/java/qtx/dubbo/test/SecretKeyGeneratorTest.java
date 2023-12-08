@@ -23,4 +23,9 @@ public class SecretKeyGeneratorTest {
         System.out.println(Base64.getEncoder()
                 .encodeToString(keyBytes));
     }
+
+    @Test
+    public void test1(){
+        System.out.println(9 % 2);
+    }
 }
