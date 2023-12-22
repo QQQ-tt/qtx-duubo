@@ -6,6 +6,7 @@ import java.util.List;
  * @author qtx
  * @since 2022/10/30 20:05
  */
+@FunctionalInterface
 public interface ConvertList<I extends O, O> {
 
     /**

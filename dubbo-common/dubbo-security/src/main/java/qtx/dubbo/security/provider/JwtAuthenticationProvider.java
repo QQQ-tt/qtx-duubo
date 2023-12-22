@@ -2,6 +2,7 @@ package qtx.dubbo.security.provider;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -9,9 +10,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import qtx.dubbo.java.CommonMethod;
+import qtx.dubbo.java.enums.DataEnums;
+import qtx.dubbo.java.info.StaticConstant;
+import qtx.dubbo.redis.util.RedisUtils;
 import qtx.dubbo.security.util.JwtUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author qtx
@@ -19,10 +26,32 @@ import java.util.List;
  */
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
+    private final RedisUtils redisUtils;
+
+    private final CommonMethod commonMethod;
+
+    public JwtAuthenticationProvider(RedisUtils redisUtils, CommonMethod commonMethod) {
+        this.redisUtils = redisUtils;
+        this.commonMethod = commonMethod;
+    }
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String jwt = authentication.getCredentials()
                 .toString();
+        String userCode = commonMethod.getUserCode();
+        Map<Object, Object> redisUser = redisUtils.getHashMsg(
+                StaticConstant.LOGIN_USER + userCode + StaticConstant.REDIS_INFO);
+        if (redisUser == null) {
+            throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
+        }
+
+        if (!redisUser.get("userCode")
+                .toString()
+                .equals(userCode)) {
+            throw new AuthenticationServiceException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
+        }
+
         String body = JwtUtils.getBodyFromToken(jwt);
         Claims claims = JwtUtils.getClaimsFromToken(jwt);
         assert claims != null;

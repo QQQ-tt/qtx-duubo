@@ -24,5 +24,5 @@ public class LogBO {
 
     private String param;
 
-    public static ThreadLocal<LogBO> logBOThreadLocal;
+    public static ThreadLocal<LogBO> logBOThreadLocal = new ThreadLocal<>();
 }

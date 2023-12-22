@@ -9,12 +9,16 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import qtx.dubbo.security.filter.JwtAuthTokenFilter;
+import qtx.dubbo.java.CommonMethod;
+import qtx.dubbo.redis.util.RedisUtils;
+import qtx.dubbo.security.filter.SecurityAuthFilter;
 import qtx.dubbo.security.provider.JwtAuthenticationProvider;
 import qtx.dubbo.security.userdetails.UserDetailsServiceImpl;
 
@@ -38,16 +42,29 @@ public class SecurityConfig {
 
     private final DiyAuthorizationManager authorizationManager;
 
-    private final JwtAuthTokenFilter jwtAuthTokenFilter;
+    private final RedisUtils redisUtils;
+
+    private final CommonMethod commonMethod;
 
     public SecurityConfig(UserDetailsServiceImpl userDetailsService, DiyAccessDeniedHandler accessDeniedHandler,
                           DiyAuthenticationEntryPoint authenticationEntryPoint,
-                          DiyAuthorizationManager authorizationManager, JwtAuthTokenFilter jwtAuthTokenFilter) {
+                          DiyAuthorizationManager authorizationManager, RedisUtils redisUtils, CommonMethod commonMethod) {
         this.userDetailsService = userDetailsService;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authorizationManager = authorizationManager;
-        this.jwtAuthTokenFilter = jwtAuthTokenFilter;
+        this.redisUtils = redisUtils;
+        this.commonMethod = commonMethod;
+    }
+
+    /**
+     * 密码解密方式
+     *
+     * @return
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -57,7 +74,7 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         http.csrf()
                 .disable()
                 .sessionManagement()
@@ -69,14 +86,15 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(auth -> auth.anyRequest()
                         .access(authorizationManager))
-                .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new SecurityAuthFilter(commonMethod, authenticationManager),
+                        UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(daoAuthenticationProvider())
-                .authenticationProvider(new JwtAuthenticationProvider())
+                .authenticationProvider(new JwtAuthenticationProvider(redisUtils, commonMethod))
                 .cors();
         return http.build();
     }
 
-    public DaoAuthenticationProvider daoAuthenticationProvider(){
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         return provider;
@@ -84,7 +102,6 @@ public class SecurityConfig {
 
     /**
      * 跨域配置
-     *
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
