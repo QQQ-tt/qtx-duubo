@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,8 +27,8 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
 
     private final CommonMethod commonMethod;
 
-    public SecurityAuthFilter(CommonMethod commonMethod, AuthenticationManager authenticationManager) {
-        super(authenticationManager, new AntPathRequestMatcher("/login/login", "POST"));
+    public SecurityAuthFilter(CommonMethod commonMethod) {
+        super(new AntPathRequestMatcher("/login/login", "POST"));
         this.commonMethod = commonMethod;
     }
 

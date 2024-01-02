@@ -2,7 +2,7 @@ package qtx.dubbo.security.provider;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -42,17 +42,17 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String userCode = commonMethod.getUserCode();
         Map<Object, Object> redisUser = redisUtils.getHashMsg(
                 StaticConstant.LOGIN_USER + userCode + StaticConstant.REDIS_INFO);
-        if (redisUser == null) {
+        if (redisUser == null || redisUser.isEmpty()) {
             throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
         }
 
+        String body = JwtUtils.getBodyFromToken(jwt);
+
         if (!redisUser.get("userCode")
                 .toString()
-                .equals(userCode)) {
-            throw new AuthenticationServiceException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
+                .equals(body)) {
+            throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
         }
-
-        String body = JwtUtils.getBodyFromToken(jwt);
         Claims claims = JwtUtils.getClaimsFromToken(jwt);
         assert claims != null;
         List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(

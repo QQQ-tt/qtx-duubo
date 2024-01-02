@@ -27,24 +27,21 @@ import java.io.IOException;
  * @author qtx
  * @since 2023/12/22
  */
-@Setter
 public abstract class AbstractAuthFilter extends OncePerRequestFilter {
 
+    @Setter
     private AuthenticationManager authenticationManager;
 
-    private SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
+    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
             .getContextHolderStrategy();
 
-    private SecurityContextRepository securityContextRepository = new RequestAttributeSecurityContextRepository();
-
-    protected ApplicationEventPublisher eventPublisher;
+    private final SecurityContextRepository securityContextRepository = new RequestAttributeSecurityContextRepository();
 
     protected RequestMatcher requiresAuthenticationRequestMatcher;
 
     protected String login;
 
-    protected AbstractAuthFilter(AuthenticationManager authenticationManager, RequestMatcher requiresAuthenticationRequestMatcher) {
-        setAuthenticationManager(authenticationManager);
+    protected AbstractAuthFilter(RequestMatcher requiresAuthenticationRequestMatcher) {
         this.requiresAuthenticationRequestMatcher = requiresAuthenticationRequestMatcher;
     }
 

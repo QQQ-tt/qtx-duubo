@@ -4,13 +4,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -20,7 +20,6 @@ import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.redis.util.RedisUtils;
 import qtx.dubbo.security.filter.SecurityAuthFilter;
 import qtx.dubbo.security.provider.JwtAuthenticationProvider;
-import qtx.dubbo.security.userdetails.UserDetailsServiceImpl;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,10 +30,9 @@ import java.util.Collections;
  */
 @Configuration
 @EnableMethodSecurity
+@EnableWebSecurity
 @ConditionalOnProperty(name = "spring.security", havingValue = "true")
 public class SecurityConfig {
-
-    private final UserDetailsServiceImpl userDetailsService;
 
     private final DiyAccessDeniedHandler accessDeniedHandler;
 
@@ -46,10 +44,10 @@ public class SecurityConfig {
 
     private final CommonMethod commonMethod;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService, DiyAccessDeniedHandler accessDeniedHandler,
+    public SecurityConfig(DiyAccessDeniedHandler accessDeniedHandler,
                           DiyAuthenticationEntryPoint authenticationEntryPoint,
-                          DiyAuthorizationManager authorizationManager, RedisUtils redisUtils, CommonMethod commonMethod) {
-        this.userDetailsService = userDetailsService;
+                          DiyAuthorizationManager authorizationManager, RedisUtils redisUtils,
+                          CommonMethod commonMethod) {
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authorizationManager = authorizationManager;
@@ -68,14 +66,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf()
+                .disable()
+                .formLogin()
                 .disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -86,18 +80,19 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(auth -> auth.anyRequest()
                         .access(authorizationManager))
-                .addFilterBefore(new SecurityAuthFilter(commonMethod, authenticationManager),
-                        UsernamePasswordAuthenticationFilter.class)
-                .authenticationProvider(daoAuthenticationProvider())
                 .authenticationProvider(new JwtAuthenticationProvider(redisUtils, commonMethod))
                 .cors();
-        return http.build();
+        SecurityAuthFilter filter = new SecurityAuthFilter(commonMethod);
+        http.addFilterBefore(filter,
+                UsernamePasswordAuthenticationFilter.class);
+        DefaultSecurityFilterChain chain = http.build();
+        filter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
+        return chain;
     }
 
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        return provider;
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) {
+        return http.getSharedObject(AuthenticationManager.class);
     }
 
     /**

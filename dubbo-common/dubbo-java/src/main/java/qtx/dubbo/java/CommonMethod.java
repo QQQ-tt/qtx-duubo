@@ -15,25 +15,23 @@ import java.io.PrintWriter;
  * @author qtx
  * @since 2022/11/2
  */
-@Setter
-@Getter
 @Component
 public class CommonMethod {
 
     /**
      * 获取当前登录人userCode
      */
-    private String userCode;
+    private final ThreadLocal<String> userCode = new ThreadLocal<>();
 
     /**
      * 获取请求ip
      */
-    private String ip;
+    private final ThreadLocal<String> ip = new ThreadLocal<>();
 
     /**
      * 请求地址
      */
-    private String uri;
+    private final ThreadLocal<String> uri = new ThreadLocal<>();
 
 
     /**
@@ -76,4 +74,27 @@ public class CommonMethod {
         writer.flush();
     }
 
+    public String getUserCode() {
+        return userCode.get();
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode.set(userCode);
+    }
+
+    public String getIp() {
+        return ip.get();
+    }
+
+    public void setIp(String ip) {
+        this.ip.set(ip);
+    }
+
+    public String getUri() {
+        return uri.get();
+    }
+
+    public void setUri(String uri) {
+        this.uri.set(uri);
+    }
 }
