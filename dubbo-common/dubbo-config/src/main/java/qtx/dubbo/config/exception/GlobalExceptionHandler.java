@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Result<String>> nullException(NullPointerException e) {
-        log.error("空指针异常");
+        log.error("空指针异常", e);
         return new ResponseEntity<>(Result.failed("空指针异常"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

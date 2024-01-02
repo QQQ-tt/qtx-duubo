@@ -22,13 +22,13 @@ import qtx.dubbo.rocketmq.util.RocketMQUtils;
 @Slf4j
 @Order(2)
 @WebFilter("/*")
-@ConditionalOnProperty(name = "rocketmq.enable",havingValue = "true")
+@ConditionalOnProperty(name = {"rocketmq.enable", "log.mysql.enable"}, havingValue = "true")
 public class LogFilter extends OncePerRequestFilter {
 
     private final RocketMQUtils rocketMQUtils;
 
-    public LogFilter(RocketMQUtils rocketMQUtils) {
-        this.rocketMQUtils = rocketMQUtils;
+    public LogFilter(RocketMQUtils utils) {
+        this.rocketMQUtils = utils;
     }
 
     @SneakyThrows
