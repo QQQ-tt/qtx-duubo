@@ -50,21 +50,21 @@ public class RocketMQUtils {
     /**
      * 发送普通消息(同步)
      *
-     * @param rocketMQTopicEnums 消息类型
-     * @param messageBody        消息内容
+     * @param topicEnums  消息类型
+     * @param messageBody 消息内容
      * @throws ClientException 连接异常
      */
-    public void sendMsg(RocketMQTopicEnums rocketMQTopicEnums, String key, String messageBody) throws ClientException {
+    public void sendMsg(RocketMQTopicEnums topicEnums, String key, String messageBody) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = producerFactory.getInstance(rocketMQTopicEnums.getTopic());
+        Producer producer = producerFactory.getInstance(topicEnums.getTopic());
         //普通消息发送。
         Message message = provider.newMessageBuilder()
-                .setTopic(rocketMQTopicEnums.getTopic())
+                .setTopic(topicEnums.getTopic())
                 //设置消息索引键，可根据关键字精确查找某条消息。
                 .setKeys(key)
                 //设置消息Tag，用于消费端根据指定Tag过滤消息。
-                .setTag(rocketMQTopicEnums.getTag())
+                .setTag(topicEnums.getTag())
                 //消息体。
                 .setBody(messageBody.getBytes())
                 .build();
@@ -80,21 +80,21 @@ public class RocketMQUtils {
     /**
      * 发送普通消息(异步)
      *
-     * @param rocketMQTopicEnums 消息类型
-     * @param messageBody        消息内容
+     * @param topicEnums  消息类型
+     * @param messageBody 消息内容
      * @throws ClientException 连接异常
      */
-    public void sendAsyncMsg(RocketMQTopicEnums rocketMQTopicEnums, String key, String messageBody) throws ClientException {
+    public void sendAsyncMsg(RocketMQTopicEnums topicEnums, String key, String messageBody) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = producerFactory.getInstance(rocketMQTopicEnums.getTopic());
+        Producer producer = producerFactory.getInstance(topicEnums.getTopic());
         //普通消息发送。
         Message message = provider.newMessageBuilder()
-                .setTopic(rocketMQTopicEnums.getTopic())
+                .setTopic(topicEnums.getTopic())
                 //设置消息索引键，可根据关键字精确查找某条消息。
                 .setKeys(key)
                 //设置消息Tag，用于消费端根据指定Tag过滤消息。
-                .setTag(rocketMQTopicEnums.getTag())
+                .setTag(topicEnums.getTag())
                 //消息体。
                 .setBody(messageBody.getBytes())
                 .build();
@@ -116,22 +116,22 @@ public class RocketMQUtils {
     /**
      * 发送定时/延时消息
      *
-     * @param rocketMQTopicEnums 消息类型
-     * @param messageBody        消息内容
-     * @param deliverTimeStamp   时间戳
+     * @param topicEnums       消息类型
+     * @param messageBody      消息内容
+     * @param deliverTimeStamp 时间戳
      * @throws ClientException 连接异常
      */
-    public void sendMsg(RocketMQTopicEnums rocketMQTopicEnums, String key, String messageBody, Long deliverTimeStamp) throws ClientException {
+    public void sendMsg(RocketMQTopicEnums topicEnums, String key, String messageBody, Long deliverTimeStamp) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = producerFactory.getInstance(rocketMQTopicEnums.getTopic());
+        Producer producer = producerFactory.getInstance(topicEnums.getTopic());
         //普通消息发送。
         Message message = provider.newMessageBuilder()
-                .setTopic(rocketMQTopicEnums.getTopic())
+                .setTopic(topicEnums.getTopic())
                 //设置消息索引键，可根据关键字精确查找某条消息。
                 .setKeys(key)
                 //设置消息Tag，用于消费端根据指定Tag过滤消息。
-                .setTag(rocketMQTopicEnums.getTag())
+                .setTag(topicEnums.getTag())
                 //设置发送时间
                 .setDeliveryTimestamp(deliverTimeStamp)
                 //消息体。
@@ -149,22 +149,22 @@ public class RocketMQUtils {
     /**
      * 发送顺序消息
      *
-     * @param rocketMQTopicEnums 消息类型
-     * @param messageBody        消息内容
-     * @param msgGroup           排序分组编号,推荐设置
+     * @param topicEnums  消息类型
+     * @param messageBody 消息内容
+     * @param msgGroup    排序分组编号,推荐设置
      * @throws ClientException 连接异常
      */
-    public void sendMsg(RocketMQTopicEnums rocketMQTopicEnums, String key, String messageBody, String msgGroup) throws ClientException {
+    public void sendMsg(RocketMQTopicEnums topicEnums, String key, String messageBody, String msgGroup) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = producerFactory.getInstance(rocketMQTopicEnums.getTopic());
+        Producer producer = producerFactory.getInstance(topicEnums.getTopic());
         //普通消息发送。
         Message message = provider.newMessageBuilder()
-                .setTopic(rocketMQTopicEnums.getTopic())
+                .setTopic(topicEnums.getTopic())
                 //设置消息索引键，可根据关键字精确查找某条消息。
                 .setKeys(key)
                 //设置消息Tag，用于消费端根据指定Tag过滤消息。
-                .setTag(rocketMQTopicEnums.getTag())
+                .setTag(topicEnums.getTag())
                 //设置顺序消息的排序分组，该分组尽量保持离散，避免热点排序分组。
                 .setMessageGroup(msgGroup)
                 //消息体。
@@ -182,22 +182,23 @@ public class RocketMQUtils {
     /**
      * 发送事务消息(同步)
      *
-     * @param rocketMQTopicEnums 消息类型
-     * @param messageBody        消息内容
+     * @param topicEnums  消息类型
+     * @param messageBody 消息内容
      * @throws ClientException 连接异常
      */
-    public void sendMsg(RocketMQTopicEnums rocketMQTopicEnums, String key, String messageBody, TransactionChecker checker, String info, Boolean flag) throws ClientException {
+    public void sendMsg(RocketMQTopicEnums topicEnums, String key, String messageBody, TransactionChecker checker, String info
+            , Boolean flag) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = producerFactory.getTransactionalInstance(checker, rocketMQTopicEnums.getTopic());
+        Producer producer = producerFactory.getTransactionalInstance(checker, topicEnums.getTopic());
         Transaction transaction = producer.beginTransaction();
         //普通消息发送。
         Message message = provider.newMessageBuilder()
-                .setTopic(rocketMQTopicEnums.getTopic())
+                .setTopic(topicEnums.getTopic())
                 //设置消息索引键，可根据关键字精确查找某条消息。
                 .setKeys(key)
                 //设置消息Tag，用于消费端根据指定Tag过滤消息。
-                .setTag(rocketMQTopicEnums.getTag())
+                .setTag(topicEnums.getTag())
                 //设置自定义标记
                 .addProperty(StaticConstant.ROCKETMQ_KEY, info)
                 //消息体。
@@ -223,19 +224,20 @@ public class RocketMQUtils {
     /**
      * 消费者
      *
-     * @param rocketMQTopicEnums    消息类型
-     * @param rocketMQConsumerEnums 消费者群组
+     * @param topicEnums    消息类型
+     * @param consumerEnums 消费者群组
      * @param messageListener       监听器处理消费结果
      * @return 消费者对象
      * @throws ClientException 连接异常
      */
-    public PushConsumer pushConsumer(RocketMQTopicEnums rocketMQTopicEnums, RocketMQConsumerEnums rocketMQConsumerEnums, MessageListener messageListener) throws ClientException {
+    public PushConsumer pushConsumer(RocketMQTopicEnums topicEnums, RocketMQConsumerEnums consumerEnums,
+                                     MessageListener messageListener) throws ClientException {
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
-        FilterExpression filterExpression = new FilterExpression(rocketMQTopicEnums.getTag(), FilterExpressionType.TAG);
+        FilterExpression filterExpression = new FilterExpression(topicEnums.getTag(), FilterExpressionType.TAG);
         return provider.newPushConsumerBuilder()
                 .setClientConfiguration(configuration)
-                .setConsumerGroup(rocketMQConsumerEnums.getName())
-                .setSubscriptionExpressions(Collections.singletonMap(rocketMQTopicEnums.getTopic(), filterExpression))
+                .setConsumerGroup(consumerEnums.getName())
+                .setSubscriptionExpressions(Collections.singletonMap(topicEnums.getTopic(), filterExpression))
                 .setMessageListener(messageListener)
                 .build();
     }

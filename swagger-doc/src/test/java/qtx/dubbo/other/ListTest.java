@@ -2,7 +2,8 @@ package qtx.dubbo.other;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author qtx

@@ -1,10 +1,10 @@
 package qtx.dubbo.log.impl;
 
-import qtx.dubbo.model.entity.log.SysLog;
-import qtx.dubbo.log.mapper.SysLogMapper;
-import qtx.dubbo.service.log.SysLogService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import qtx.dubbo.log.mapper.SysLogMapper;
+import qtx.dubbo.model.entity.log.SysLog;
+import qtx.dubbo.service.log.SysLogService;
 
 /**
  * <p>

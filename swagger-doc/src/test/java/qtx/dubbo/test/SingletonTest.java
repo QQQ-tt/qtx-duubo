@@ -1,6 +1,5 @@
 package qtx.dubbo.test;
 
-import lombok.Data;
 import org.junit.jupiter.api.Test;
 import qtx.dubbo.test.entity.UserTest;
 

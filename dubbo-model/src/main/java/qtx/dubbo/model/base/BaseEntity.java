@@ -5,10 +5,9 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
 import java.time.LocalDateTime;
-
-import lombok.Data;
 
 /**
  * @author QTX

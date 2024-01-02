@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(name = "rocketmq.enable",havingValue = "true")
+@ConditionalOnProperty(name = {"rocketmq.enable", "apisix.gateway"}, havingValue = "true")
 public class InitEvent {
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;

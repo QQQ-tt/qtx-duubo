@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import qtx.dubbo.java.info.StaticConstant;
 
-
 import java.util.List;
 
 /**

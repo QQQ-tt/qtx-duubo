@@ -1,7 +1,7 @@
 package qtx.dubbo.service.log;
 
-import qtx.dubbo.model.entity.log.SysLog;
 import com.baomidou.mybatisplus.extension.service.IService;
+import qtx.dubbo.model.entity.log.SysLog;
 
 /**
  * <p>

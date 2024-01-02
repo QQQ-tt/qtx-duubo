@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import qtx.dubbo.model.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
+import qtx.dubbo.model.base.BaseEntity;
 
 /**
  * <p>

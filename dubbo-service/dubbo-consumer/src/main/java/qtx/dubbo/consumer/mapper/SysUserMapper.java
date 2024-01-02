@@ -1,8 +1,8 @@
 package qtx.dubbo.consumer.mapper;
 
-import qtx.dubbo.model.entity.consumer.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import qtx.dubbo.model.entity.consumer.SysUser;
 
 /**
  * <p>

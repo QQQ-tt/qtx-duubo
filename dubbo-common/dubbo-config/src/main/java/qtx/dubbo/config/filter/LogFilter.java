@@ -2,7 +2,6 @@ package qtx.dubbo.config.filter;
 
 import com.alibaba.fastjson.JSON;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,8 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import qtx.dubbo.config.bo.LogBO;
 import qtx.dubbo.rocketmq.enums.RocketMQTopicEnums;
 import qtx.dubbo.rocketmq.util.RocketMQUtils;
-
-import java.io.IOException;
 
 /**
  * @author qtx

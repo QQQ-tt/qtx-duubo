@@ -3,13 +3,14 @@ package qtx.dubbo.provider;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
-
-import java.util.*;
-
-import com.baomidou.mybatisplus.generator.config.TemplateType;
-import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import org.apache.ibatis.annotations.Mapper;
 import qtx.dubbo.model.base.BaseEntity;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 代码生成器

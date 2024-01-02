@@ -1,8 +1,8 @@
 package qtx.dubbo.log.mapper;
 
-import qtx.dubbo.model.entity.log.SysLog;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import qtx.dubbo.model.entity.log.SysLog;
 
 /**
  * <p>

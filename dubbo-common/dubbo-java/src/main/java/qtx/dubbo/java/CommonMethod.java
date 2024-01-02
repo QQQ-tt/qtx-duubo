@@ -2,8 +2,6 @@ package qtx.dubbo.java;
 
 import com.alibaba.fastjson.JSONArray;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.java.enums.DataEnums;

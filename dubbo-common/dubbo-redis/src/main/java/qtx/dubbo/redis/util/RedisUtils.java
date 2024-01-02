@@ -126,8 +126,8 @@ public class RedisUtils {
      *
      * @param key key
      */
-    public boolean deleteByKey(String key) {
-        return Boolean.TRUE.equals(redisTemplate.delete(key));
+    public void deleteByKey(String key) {
+        redisTemplate.delete(key);
     }
 
     /**

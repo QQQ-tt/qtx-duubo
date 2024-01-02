@@ -1,8 +1,8 @@
 package qtx.dubbo.activity.mapper;
 
-import qtx.dubbo.model.entity.activity.AcName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import qtx.dubbo.model.entity.activity.AcName;
 
 /**
  * <p>

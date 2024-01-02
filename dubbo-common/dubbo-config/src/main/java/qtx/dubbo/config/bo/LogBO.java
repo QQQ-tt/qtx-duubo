@@ -2,7 +2,6 @@ package qtx.dubbo.config.bo;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
 /**
  * @author qtx

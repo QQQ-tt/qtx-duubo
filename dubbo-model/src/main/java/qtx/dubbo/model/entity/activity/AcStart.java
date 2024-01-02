@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import qtx.dubbo.model.base.BaseEntity;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import lombok.*;
-import qtx.dubbo.model.base.BaseEntity;
 
 /**
  * <p>

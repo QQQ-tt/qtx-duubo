@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.generator.config.OutputFile;
 import org.apache.ibatis.annotations.Mapper;
 import qtx.dubbo.model.base.BaseEntity;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 代码生成器

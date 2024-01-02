@@ -8,8 +8,6 @@ import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PutExchange;
 import qtx.dubbo.log.interfaces.apisix.ApiEntity;
 
-import java.util.Map;
-
 /**
  * @author qtx
  * @since 2023/8/2

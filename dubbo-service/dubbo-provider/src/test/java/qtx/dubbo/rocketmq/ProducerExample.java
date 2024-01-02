@@ -9,8 +9,6 @@ import org.apache.rocketmq.client.apis.ClientServiceProvider;
 import org.apache.rocketmq.client.apis.message.Message;
 import org.apache.rocketmq.client.apis.producer.Producer;
 import org.apache.rocketmq.client.apis.producer.SendReceipt;
-import org.apache.rocketmq.shaded.org.slf4j.Logger;
-import org.apache.rocketmq.shaded.org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
