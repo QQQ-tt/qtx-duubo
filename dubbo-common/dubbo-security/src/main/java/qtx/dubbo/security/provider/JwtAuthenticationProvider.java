@@ -1,6 +1,7 @@
 package qtx.dubbo.security.provider;
 
 import io.jsonwebtoken.Claims;
+import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,6 +41,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String jwt = authentication.getCredentials()
                 .toString();
         String userCode = commonMethod.getUserCode();
+        if (StringUtils.isBlank(commonMethod.getToken())){
+            throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
+        }
         Map<Object, Object> redisUser = redisUtils.getHashMsg(
                 StaticConstant.LOGIN_USER + userCode + StaticConstant.REDIS_INFO);
         if (redisUser == null || redisUser.isEmpty()) {

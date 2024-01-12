@@ -12,4 +12,6 @@ public class Login {
     private String userCode;
 
     private String password;
+
+    private String token;
 }

@@ -40,12 +40,12 @@ public class JwtUtils {
     public static String generateToken(String username, Map<String, Object> claims) {
         Date now = new Date();
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .setIssuer(ISSUER)
-                .setClaims(claims)
                 .compact();
     }
 
@@ -140,7 +140,7 @@ public class JwtUtils {
      * @return 是否过期
      */
     public static Boolean isTokenExpired(String token) {
-        try {
+/*        try {
             return Jwts.parser()
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(token)
@@ -149,6 +149,7 @@ public class JwtUtils {
                     .after(new Date());
         } catch (Exception e) {
             return false;
-        }
+        }*/
+        return false;
     }
 }

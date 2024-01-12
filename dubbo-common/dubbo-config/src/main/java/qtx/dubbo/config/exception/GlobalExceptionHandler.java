@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Result<String>> exception(Exception e) {
-        log.error(e.getMessage());
+        log.error(e.getMessage(), e);
         return new ResponseEntity<>(Result.failed(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

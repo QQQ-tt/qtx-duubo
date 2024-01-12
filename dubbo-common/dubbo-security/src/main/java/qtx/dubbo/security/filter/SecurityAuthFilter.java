@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -33,6 +33,7 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
     }
 
 
+    @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         commonMethod.setUri(request.getRequestURI());
         commonMethod.setIp(request.getRemoteAddr());
@@ -45,14 +46,15 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
             token = login.getPassword();
         } else {
             token = request.getHeader(StaticConstant.TOKEN);
+            commonMethod.setToken(token);
             if (StringUtils.isBlank(token)) {
-                throw new AuthenticationServiceException(DataEnums.ACCESS_DENIED.getMsg() + request.getMethod());
+                throw new BadCredentialsException(DataEnums.ACCESS_DENIED.getMsg() + request.getMethod());
             }
             if (!JwtUtils.validateToken(token)) {
-                throw new AuthenticationServiceException(DataEnums.TOKEN_IS_ILLEGAL.getMsg() + request.getMethod());
+                throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg() + request.getMethod());
             }
             if (!JwtUtils.isTokenExpired(token)) {
-                throw new AuthenticationServiceException(DataEnums.TOKEN_LOGIN_EXPIRED.getMsg() + request.getMethod());
+                throw new BadCredentialsException(DataEnums.TOKEN_LOGIN_EXPIRED.getMsg() + request.getMethod());
             }
             userCode = JwtUtils.getBodyFromToken(token);
         }

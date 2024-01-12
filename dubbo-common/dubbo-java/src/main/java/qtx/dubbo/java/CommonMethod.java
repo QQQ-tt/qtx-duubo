@@ -31,6 +31,8 @@ public class CommonMethod {
      */
     private final ThreadLocal<String> uri = new ThreadLocal<>();
 
+    private final ThreadLocal<String> token = new ThreadLocal<>();
+
 
     /**
      * 过滤器返回信息
@@ -94,5 +96,13 @@ public class CommonMethod {
 
     public void setUri(String uri) {
         this.uri.set(uri);
+    }
+
+    public String getToken() {
+        return token.get();
+    }
+
+    public void setToken(String token){
+         this.token.set(token);
     }
 }

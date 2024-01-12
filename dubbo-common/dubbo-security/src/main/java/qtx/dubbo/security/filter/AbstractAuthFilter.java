@@ -85,7 +85,7 @@ public abstract class AbstractAuthFilter extends OncePerRequestFilter {
     protected void unsuccessfulAuthentication(HttpServletResponse response,
                                               AuthenticationException failed) throws IOException {
         this.securityContextHolderStrategy.clearContext();
-        CommonMethod.failed(response, failed.getMessage());
+//        CommonMethod.failed(response, failed.getMessage());
     }
 
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
