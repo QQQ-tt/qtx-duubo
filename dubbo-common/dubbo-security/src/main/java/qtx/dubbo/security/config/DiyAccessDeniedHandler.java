@@ -23,16 +23,10 @@ import java.io.IOException;
 @ConditionalOnProperty(name = "spring.security", havingValue = "true")
 public class DiyAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final CommonMethod commonMethod;
-
-    public DiyAccessDeniedHandler(CommonMethod commonMethod) {
-        this.commonMethod = commonMethod;
-    }
-
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
         log.info("user info error {}", DataEnums.ACCESS_DENIED);
-        commonMethod.failed(response, DataEnums.ACCESS_DENIED);
+        CommonMethod.failed(response, DataEnums.ACCESS_DENIED);
     }
 }
