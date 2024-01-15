@@ -1,7 +1,6 @@
 package qtx.dubbo.security.config;
 
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ public class DiyAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
-                       AccessDeniedException accessDeniedException) throws IOException, ServletException {
+                       AccessDeniedException accessDeniedException) throws IOException {
         log.info("user info error {}", DataEnums.ACCESS_DENIED);
         CommonMethod.failed(response, DataEnums.ACCESS_DENIED);
     }

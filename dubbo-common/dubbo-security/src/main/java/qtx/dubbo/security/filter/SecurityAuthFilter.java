@@ -1,7 +1,6 @@
 package qtx.dubbo.security.filter;
 
 import com.alibaba.fastjson.JSON;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -9,7 +8,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.Assert;
 import qtx.dubbo.java.CommonMethod;
@@ -17,8 +15,6 @@ import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.info.StaticConstant;
 import qtx.dubbo.security.Login;
 import qtx.dubbo.security.util.JwtUtils;
-
-import java.io.IOException;
 
 /**
  * @author qtx
@@ -35,7 +31,7 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
 
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         commonMethod.setUri(request.getRequestURI());
         commonMethod.setIp(request.getRemoteAddr());
         String userCode;

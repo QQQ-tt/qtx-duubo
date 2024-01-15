@@ -140,7 +140,7 @@ public class JwtUtils {
      * @return 是否过期
      */
     public static Boolean isTokenExpired(String token) {
-/*        try {
+        try {
             return Jwts.parser()
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(token)
@@ -149,7 +149,6 @@ public class JwtUtils {
                     .after(new Date());
         } catch (Exception e) {
             return false;
-        }*/
-        return false;
+        }
     }
 }

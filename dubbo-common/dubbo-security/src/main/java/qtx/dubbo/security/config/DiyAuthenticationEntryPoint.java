@@ -23,16 +23,10 @@ import java.io.IOException;
 @ConditionalOnProperty(name = "spring.security", havingValue = "true")
 public class DiyAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final CommonMethod commonMethod;
-
-    public DiyAuthenticationEntryPoint(CommonMethod commonMethod) {
-        this.commonMethod = commonMethod;
-    }
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+                         AuthenticationException authException) throws IOException {
         log.info("user info error {}", DataEnums.ACCESS_DENIED);
-        commonMethod.failed(response, DataEnums.ACCESS_DENIED);
+        CommonMethod.failed(response, DataEnums.ACCESS_DENIED);
     }
 }

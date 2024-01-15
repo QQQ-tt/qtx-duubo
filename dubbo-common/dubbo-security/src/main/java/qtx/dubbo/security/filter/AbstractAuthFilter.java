@@ -13,12 +13,11 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.AuthUrlEnums;
 
 import java.io.IOException;
@@ -39,8 +38,6 @@ public abstract class AbstractAuthFilter extends OncePerRequestFilter {
 
     protected RequestMatcher requiresAuthenticationRequestMatcher;
 
-    private final AuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
-
     protected String login;
 
     protected AbstractAuthFilter(RequestMatcher requiresAuthenticationRequestMatcher) {
@@ -52,6 +49,7 @@ public abstract class AbstractAuthFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         if (matches(request)) {
             filterChain.doFilter(request, response);
+            return;
         }
         if (requiresAuthenticationRequestMatcher.matches(request)) {
             RequestWrapper wrapper = new RequestWrapper(request);
@@ -66,10 +64,10 @@ public abstract class AbstractAuthFilter extends OncePerRequestFilter {
             successfulAuthentication(request, response, filterChain, authentication);
         } catch (InternalAuthenticationServiceException failed) {
             this.logger.error("An internal error occurred while trying to authenticate the user.", failed);
-            unsuccessfulAuthentication(request, response, failed);
+            unsuccessfulAuthentication(response, failed);
         } catch (AuthenticationException ex) {
             // Authentication failed
-            unsuccessfulAuthentication(request, response, ex);
+            unsuccessfulAuthentication(response, ex);
         }
     }
 
@@ -85,10 +83,10 @@ public abstract class AbstractAuthFilter extends OncePerRequestFilter {
             throws AuthenticationException, IOException, ServletException;
 
 
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                              AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException {
         this.securityContextHolderStrategy.clearContext();
-        failureHandler.onAuthenticationFailure(request, response, failed);
+        CommonMethod.failed(response, failed.getMessage());
     }
 
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
