@@ -8,12 +8,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
+import qtx.dubbo.config.auth.AuthChain;
 import qtx.dubbo.config.bo.LogBO;
 import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.AuthUrlEnums;
 import qtx.dubbo.java.enums.LogUrlEnums;
+import qtx.dubbo.java.info.StaticConstant;
 
 import java.io.IOException;
 
@@ -28,8 +31,11 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private final CommonMethod commonMethod;
 
-    public AuthFilter(CommonMethod commonMethod) {
+    private final AuthChain authChain;
+
+    public AuthFilter(CommonMethod commonMethod, @Autowired(required = false) AuthChain authChain) {
         this.commonMethod = commonMethod;
+        this.authChain = authChain;
     }
 
     @Override
@@ -45,6 +51,12 @@ public class AuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (authChain != null) {
+            boolean auth = authChain.auth(userCode, request.getHeader(StaticConstant.TOKEN), request, response);
+            if (auth) {
+                return;
+            }
+        }
         RequestWrapper requestWrapper = getRequestWrapper(request, uri, userCode, ip);
         commonMethod.setUserCode(userCode);
 
@@ -80,7 +92,7 @@ public class AuthFilter extends OncePerRequestFilter {
         return requestWrapper;
     }
 
-    public void setLogBO(LogBO logBO){
+    public void setLogBO(LogBO logBO) {
         LogBO.logBOThreadLocal.set(logBO);
     }
 }

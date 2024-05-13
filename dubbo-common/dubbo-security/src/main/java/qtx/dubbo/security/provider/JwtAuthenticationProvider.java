@@ -15,8 +15,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.info.StaticConstant;
+import qtx.dubbo.java.util.JwtUtils;
 import qtx.dubbo.redis.util.RedisUtils;
-import qtx.dubbo.security.util.JwtUtils;
+
 
 import java.util.List;
 import java.util.Map;

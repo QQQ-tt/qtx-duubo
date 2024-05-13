@@ -1,7 +1,9 @@
 package qtx.dubbo.java;
 
 import com.alibaba.fastjson.JSONArray;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.java.enums.DataEnums;
@@ -20,12 +22,10 @@ public class CommonMethod {
      * 获取当前登录人userCode
      */
     private final ThreadLocal<String> userCode = new ThreadLocal<>();
-
     /**
      * 获取请求ip
      */
     private final ThreadLocal<String> ip = new ThreadLocal<>();
-
     /**
      * 请求地址
      */
@@ -41,17 +41,11 @@ public class CommonMethod {
      * @param dataEnums 错误信息
      * @throws IOException io失败
      */
-    public static void failed(HttpServletResponse response, DataEnums dataEnums) throws IOException {
-        response.setCharacterEncoding("utf-8");
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        //设置响应状态码
-        response.setStatus(HttpServletResponse.SC_OK);
-        //输入响应内容
-        PrintWriter writer = response.getWriter();
-        String s = JSONArray.toJSON(Result.failed(dataEnums))
-                .toString();
-        writer.write(s);
-        writer.flush();
+    @SneakyThrows
+    public static void failed(HttpServletRequest request, HttpServletResponse response, DataEnums dataEnums) throws IOException {
+        request.setAttribute("filterException", dataEnums);
+        request.getRequestDispatcher("/exception/filterException")
+                .forward(request, response);
     }
 
     /**

@@ -26,6 +26,6 @@ public class DiyAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
         log.info("user info error {}", DataEnums.ACCESS_DENIED);
-        CommonMethod.failed(response, DataEnums.ACCESS_DENIED);
+        CommonMethod.failed(request,response, DataEnums.ACCESS_DENIED);
     }
 }

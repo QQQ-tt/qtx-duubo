@@ -27,6 +27,6 @@ public class DiyAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
         log.info("user info error {}", DataEnums.ACCESS_DENIED);
-        CommonMethod.failed(response, DataEnums.ACCESS_DENIED);
+        CommonMethod.failed(request,response, DataEnums.ACCESS_DENIED);
     }
 }

@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import qtx.dubbo.java.Result;
 import qtx.dubbo.java.info.StaticConstant;
+import qtx.dubbo.java.util.JwtUtils;
 import qtx.dubbo.redis.util.RedisUtils;
 import qtx.dubbo.security.Login;
-import qtx.dubbo.security.util.JwtUtils;
+
 
 import java.util.HashMap;
 

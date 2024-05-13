@@ -1,13 +1,16 @@
-package qtx.dubbo.security.util;
+package qtx.dubbo.java.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecureDigestAlgorithm;
 import lombok.Data;
+import lombok.val;
 import org.apache.dubbo.common.utils.StringUtils;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.exception.DataException;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,31 +24,41 @@ public class JwtUtils {
 
     // 密钥
     private static final String SECRET_KEY;
+    // 密钥实例
+    private static final SecretKey KEY;
 
     static {
         SECRET_KEY = "Wem0eH23QIuujXvefmx8GZbfIz+3nWvltFaYlq0EjtvnRvoz414Yhx+6wLptWnJ00mTqbcFeDjXWfwSQAIcc5w==";
+        KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    // 10 days
+    // 10 days jwt过期时间，单位毫秒
     private static final long EXPIRATION_TIME = 864_000_000;
+
     // 签发人
     private static final String ISSUER = "qtx";
 
+
     /**
-     * 生成token
+     * 生成jwt
+     * 使用Hs256算法，私钥使用固定密钥
      *
-     * @param username 加密字符
+     * @param claims 设置的信息
      * @return token
      */
-    public static String generateToken(String username, Map<String, Object> claims) {
-        Date now = new Date();
+    public static String generateToken(String userId, Map<String, Object> claims) {
+        //指定加密算法
+        SecureDigestAlgorithm<SecretKey, SecretKey> algorithm = Jwts.SIG.HS256;
+        //生成JWT的时间
+        long expMillis = System.currentTimeMillis() + EXPIRATION_TIME;
+        Date exp = new Date(expMillis);
+
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .setIssuer(ISSUER)
+                .claims(claims)
+                .subject(userId)
+                .signWith(KEY, algorithm)
+                .issuer(ISSUER)
+                .expiration(exp)
                 .compact();
     }
 
@@ -60,10 +73,8 @@ public class JwtUtils {
             new DataException(DataEnums.DATA_IS_ABNORMAL);
         }
         if (getIssuerFromToken(token).equals(ISSUER)) {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody();
+            val claims = getClaimsFromToken(token);
+            assert claims != null;
             return claims.getSubject();
         }
         return null;
@@ -81,9 +92,10 @@ public class JwtUtils {
         }
         if (getIssuerFromToken(token).equals(ISSUER)) {
             return Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .verifyWith(KEY)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
         }
         return null;
     }
@@ -95,11 +107,12 @@ public class JwtUtils {
      * @return 签发人
      */
     public static String getIssuerFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getIssuer();
+        val claims = Jwts.parser()
+                .verifyWith(KEY)
+                .build()
+                .parseSignedClaims(token);
+        return claims.getPayload()
+                .getIssuer();
     }
 
     /**
@@ -111,8 +124,9 @@ public class JwtUtils {
     public static boolean validateToken(String token) {
         try {
             Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token);
+                    .verifyWith(KEY)
+                    .build()
+                    .parseSignedClaims(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -126,11 +140,11 @@ public class JwtUtils {
      * @return 新的加密信息
      */
     public static String refreshToken(String token) {
-        String username = getBodyFromToken(token);
-        Claims claims = getClaimsFromToken(token);
+        String userId = getBodyFromToken(token);
+        val claims = getClaimsFromToken(token);
         assert claims != null;
         HashMap<String, Object> map = new HashMap<>(claims);
-        return generateToken(username, map);
+        return generateToken(userId, map);
     }
 
     /**
@@ -141,14 +155,12 @@ public class JwtUtils {
      */
     public static Boolean isTokenExpired(String token) {
         try {
-            return Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getExpiration()
+            val claims = getClaimsFromToken(token);
+            assert claims != null;
+            return !claims.getExpiration()
                     .after(new Date());
         } catch (Exception e) {
-            return false;
+            return true;
         }
     }
 }

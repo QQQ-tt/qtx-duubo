@@ -13,8 +13,9 @@ import org.springframework.util.Assert;
 import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.info.StaticConstant;
+import qtx.dubbo.java.util.JwtUtils;
 import qtx.dubbo.security.Login;
-import qtx.dubbo.security.util.JwtUtils;
+
 
 /**
  * @author qtx
