@@ -19,6 +19,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <dubbo.version>3.2.10</dubbo.version>
         <spring-boot.version>3.1.2</spring-boot.version>
+        <spring-cloud-alibaba.version>2022.0.0.0-RC1</spring-cloud-alibaba.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -36,6 +37,13 @@
                 <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo-bom</artifactId>
                 <version>${dubbo.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

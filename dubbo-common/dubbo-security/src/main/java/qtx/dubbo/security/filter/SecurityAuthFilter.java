@@ -51,7 +51,7 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
             if (!JwtUtils.validateToken(token)) {
                 throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg() + request.getMethod());
             }
-            if (!JwtUtils.isTokenExpired(token)) {
+            if (JwtUtils.isTokenExpired(token)) {
                 throw new BadCredentialsException(DataEnums.TOKEN_LOGIN_EXPIRED.getMsg() + request.getMethod());
             }
             userCode = JwtUtils.getBodyFromToken(token);
