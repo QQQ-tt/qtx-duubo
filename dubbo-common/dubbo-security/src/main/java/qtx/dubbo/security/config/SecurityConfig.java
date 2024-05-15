@@ -7,10 +7,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -67,23 +67,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler)
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .and()
-                .authorizeHttpRequests(auth -> auth.anyRequest()
-                        .access(authorizationManager))
-                .authenticationProvider(new JwtAuthenticationProvider(redisUtils, commonMethod))
-                .cors();
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint))
+                .authorizeHttpRequests(auth -> auth.anyRequest().access(authorizationManager))
+                .authenticationProvider(new JwtAuthenticationProvider(redisUtils, commonMethod));
+
         SecurityAuthFilter filter = new SecurityAuthFilter(commonMethod);
-        http.addFilterBefore(filter,
-                UsernamePasswordAuthenticationFilter.class);
-        DefaultSecurityFilterChain chain = http.build();
+        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+
+        SecurityFilterChain chain = http.build();
         filter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
         return chain;
     }
@@ -96,7 +92,6 @@ public class SecurityConfig {
     /**
      * 跨域配置
      */
-    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:10087", "http://192.168.3.124:10087"));

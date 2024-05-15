@@ -20,6 +20,7 @@
         <module>dubbo-redis</module>
         <module>dubbo-easyexcel</module>
         <module>dubbo-mybatis</module>
+        <module>dubbo-websocket</module>
     </modules>
 
     <properties>
