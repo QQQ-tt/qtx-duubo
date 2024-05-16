@@ -47,6 +47,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.8.0</version> <!-- 使用适合的版本 -->
+        </dependency>
         <!-- 流量控制 -->
 <!--        <dependency>-->
 <!--            <groupId>com.alibaba.cloud</groupId>-->
