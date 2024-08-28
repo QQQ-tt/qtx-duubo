@@ -28,7 +28,7 @@ public class ClientConfig {
     @Bean
     public ApiSixClient requestService(WebClient webClient) {
         HttpServiceProxyFactory proxyFactory =
-                HttpServiceProxyFactory.builder(WebClientAdapter.forClient(webClient))
+                HttpServiceProxyFactory.builderFor(WebClientAdapter.create(webClient))
                         .build();
         return proxyFactory.createClient(ApiSixClient.class);
     }

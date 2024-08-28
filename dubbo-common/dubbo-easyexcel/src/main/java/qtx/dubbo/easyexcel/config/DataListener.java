@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Set;
  * @since 2022/10/30 20:00
  */
 @Slf4j
-public class DataListener<I extends O, O> implements ReadListener<I> {
+public class DataListener<I, O> implements ReadListener<I> {
     /** 每隔5条存储数据库，实际使用中可以100条，然后清理list ，方便内存回收 */
     private static final int BATCH_COUNT = 10000;
     /** 缓存的数据 */
@@ -149,7 +150,7 @@ public class DataListener<I extends O, O> implements ReadListener<I> {
         if (convert != null) {
             service.saveBatch(saveListO);
         } else {
-            service.saveBatch((List<O>) saveListI);
+            service.saveBatch((Collection<O>) saveListI);
         }
         log.info("存储数据库成功！");
     }

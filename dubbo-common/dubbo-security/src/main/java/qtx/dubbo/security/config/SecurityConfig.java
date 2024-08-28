@@ -73,7 +73,8 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint))
-                .authorizeHttpRequests(auth -> auth.anyRequest().access(authorizationManager))
+                .authorizeHttpRequests(auth -> auth.anyRequest()
+                        .access(authorizationManager))
                 .authenticationProvider(new JwtAuthenticationProvider(redisUtils, commonMethod));
 
         SecurityAuthFilter filter = new SecurityAuthFilter(commonMethod);

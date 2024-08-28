@@ -7,7 +7,7 @@ import java.util.List;
  * @since 2022/10/30 20:05
  */
 @FunctionalInterface
-public interface ConvertList<I extends O, O> {
+public interface ConvertList<I, O> {
 
     /**
      * excel与数据库不一致，手动实现转换方式
