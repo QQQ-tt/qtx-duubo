@@ -5,12 +5,13 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.service.IService;
 import lombok.extern.slf4j.Slf4j;
+import qtx.dubbo.easyexcel.config.ConvertList;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -19,58 +20,71 @@ import java.util.Set;
 
 /**
  * @author qtx
- * @since 2022/10/30 20:00
+ * @since 2022/4/27
  */
 @Slf4j
 public class DataListener<I, O> implements ReadListener<I> {
-    /** 每隔5条存储数据库，实际使用中可以100条，然后清理list ，方便内存回收 */
+    /**
+     * 每隔5条存储数据库，实际使用中可以100条，然后清理list ，方便内存回收
+     */
     private static final int BATCH_COUNT = 10000;
-    /** 缓存的数据 */
-    private List<I> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
-    /** 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。 */
+    /**
+     * 缓存的数据
+     */
+    private List<O> cachedDataListO = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+    private List<I> cachedDataListI = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+    /**
+     * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
+     */
     private final IService<O> service;
-    /** excel数据与table不一致，手动实现转换方法 */
+
+    /**
+     * 导入表头实体
+     */
+    private final Class<I> aClass;
+
+    /**
+     * excel数据与table不一致，手动实现转换方法
+     */
     private ConvertList<I, O> convert;
+
     /**
-     * 错误标识
+     * 错误字符
      */
-    private boolean stringError;
-    /**
-     * 导入实体
-     */
-    private final Class<?> entity;
+    public String errorString;
 
     /**
      * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
      *
-     * @param service
+     * @param service 存储业务层
+     * @param aClass  传入excel实体类
      */
-    public DataListener(IService<O> service, Class<?> aClass) {
+    public DataListener(IService<O> service, Class<I> aClass) {
         this.service = service;
-        this.entity = aClass;
+        this.aClass = aClass;
     }
 
     /**
      * 需要转换excel数据，请使用这个构造方法。
      *
-     * @param service
-     * @param convert
+     * @param service 存储业务层
+     * @param aClass  传入excel实体类
+     * @param convert 对象转换
      */
-    public DataListener(IService<O> service, ConvertList<I, O> convert, Class<?> aClass) {
+    public DataListener(IService<O> service, Class<I> aClass, ConvertList<I, O> convert) {
         this.service = service;
+        this.aClass = aClass;
         this.convert = convert;
-        this.entity = aClass;
     }
 
     @Override
-    public void onException(Exception exception, AnalysisContext context) throws Exception {
+    public void onException(Exception exception, AnalysisContext context) {
     }
 
     /**
      * 这个每一条数据解析都会来调用
      *
-     * @param data    one row value. Is is same as {@link AnalysisContext#readRowHolder()}
-     * @param context
+     * @param data one row value. Isis same as {@link AnalysisContext#readRowHolder()}
      */
     @Override
     public void invoke(I data, AnalysisContext context) {
@@ -78,16 +92,21 @@ public class DataListener<I, O> implements ReadListener<I> {
         try {
             if (isNull(data)) {
                 log.info("添加一条数据到备选集合:{}", JSON.toJSONString(data));
-                cachedDataList.add(data);
+                if (convert != null) {
+                    cachedDataListI.add(data);
+                } else {
+                    cachedDataListO.add((O) data);
+                }
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
-        if (cachedDataList.size() >= BATCH_COUNT) {
+        if (cachedDataListI.size() + cachedDataListO.size() >= BATCH_COUNT) {
             saveData();
             // 存储完成清理 list
-            cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+            cachedDataListI = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+            cachedDataListO = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
         }
     }
 
@@ -102,15 +121,13 @@ public class DataListener<I, O> implements ReadListener<I> {
         Set<String> finalHead = head;
         headMap.forEach((k, v) -> {
             if (!finalHead.contains(v.getStringValue())) {
-                stringError = false;
+                errorString = "表头不符合规则";
             }
         });
     }
 
     /**
      * 所有数据解析完成了 都会来调用
-     *
-     * @param context
      */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
@@ -119,39 +136,31 @@ public class DataListener<I, O> implements ReadListener<I> {
         log.info("所有数据解析完成！");
     }
 
-    @Override
-    public boolean hasNext(AnalysisContext context) {
-        return true;
-    }
-
-    /** 加上存储数据库 */
+    /**
+     * 加上存储数据库
+     */
     private void saveData() {
-        List<O> saveListO = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
-        List<I> saveListI = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
-        Set<I> asList;
+        List<O> saveList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
         if (convert != null) {
-            log.info("{}条数据，开始转换数据格式。", cachedDataList.size());
-            saveListO.addAll(new HashSet<>(convert.convert(cachedDataList)));
+            log.info("{}条数据，开始转换数据格式。", cachedDataListI.size() + cachedDataListO.size());
+            saveList.addAll(new HashSet<>(convert.convert(cachedDataListI)));
         } else {
-            Set<O> existingData = new HashSet<>(service.query()
-                    .eq("delete_flag", "0")
+            Set<O> set = new HashSet<>(service.query()
+                    .eq("deleted", "0")
                     .list());
-            asList = new HashSet<>(cachedDataList);
-            for (I i : asList) {
-                if (i != null) {
-                    if (!existingData.contains(i)) {
-                        saveListI.add(i);
-                    }
+            Set<O> asList = new HashSet<>(cachedDataListO);
+            asList.forEach(s -> {
+                if (!set.contains(s)) {
+                    saveList.add(s);
                 }
-            }
-            log.info("{}条数据，被过滤掉！", cachedDataList.size() - saveListO.size() - saveListI.size());
+            });
+            log.info("{}条数据，被过滤掉！", cachedDataListO.size() - saveList.size());
         }
-        log.info("{}条数据，开始存储数据库！", saveListO.size() + saveListI.size());
-        if (convert != null) {
-            service.saveBatch(saveListO);
-        } else {
-            service.saveBatch((Collection<O>) saveListI);
+        if (saveList.isEmpty()) {
+            errorString = "导入数据为空";
         }
+        log.info("{}条数据，开始存储数据库！", saveList.size());
+        service.saveBatch(saveList);
         log.info("存储数据库成功！");
     }
 
@@ -160,19 +169,17 @@ public class DataListener<I, O> implements ReadListener<I> {
      *
      * @param data 实体类
      * @return 是否为空
-     *
-     * @throws IllegalAccessException
      */
     private boolean isNull(I data) throws IllegalAccessException {
         Class<?> aClass = data.getClass();
         Field[] fields = aClass.getDeclaredFields();
         int num = 0;
+        AccessibleObject.setAccessible(fields, true);
         for (Field field : fields) {
             if ("serialVersionUID".equals(field.getName())) {
                 num++;
                 continue;
             }
-            field.setAccessible(true);
             Object o = field.get(data);
             if (Objects.isNull(o)) {
                 num++;
@@ -182,11 +189,12 @@ public class DataListener<I, O> implements ReadListener<I> {
     }
 
     public Set<String> excelHead() throws ClassNotFoundException {
-        HashSet<String> set = new HashSet<>(20);
-        Field[] fields = entity.getDeclaredFields();
+        HashSet<String> set = new HashSet<>(30);
+        Field[] fields = aClass.getDeclaredFields();
         for (Field field : fields) {
             if (field.isAnnotationPresent(ExcelProperty.class)) {
-                String[] value = field.getAnnotation(ExcelProperty.class).value();
+                String[] value = field.getAnnotation(ExcelProperty.class)
+                        .value();
                 set.add(value[value.length - 1]);
             }
         }

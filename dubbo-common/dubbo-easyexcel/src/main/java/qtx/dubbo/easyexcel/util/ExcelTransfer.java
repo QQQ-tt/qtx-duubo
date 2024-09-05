@@ -4,12 +4,14 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import com.alibaba.excel.write.style.column.SimpleColumnWidthStyleStrategy;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.web.multipart.MultipartFile;
+import qtx.dubbo.easyexcel.bo.ExcelVO;
 import qtx.dubbo.easyexcel.config.ConvertList;
 import qtx.dubbo.easyexcel.config.DataListener;
 import qtx.dubbo.java.enums.DataEnums;
@@ -17,6 +19,7 @@ import qtx.dubbo.java.exception.DataException;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,10 +32,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Data
 public class ExcelTransfer {
 
-    private final static String packageName = "";
-
-    private final static int size = 1;
-
     /**
      * 上传excel 对用实体类不允许使用链式调用注解
      *
@@ -41,18 +40,17 @@ public class ExcelTransfer {
      * @param file    文件
      * @param service 对应实体的service
      * @return 成功与否
-     * @throws ClassNotFoundException
      */
-    public static <I, O> boolean importExcel(MultipartFile file, IService<O> service) throws ClassNotFoundException {
+    public static <T> boolean importExcel(MultipartFile file, IService<T> service, Class<T> aClass) {
         isEmpty(file);
-        String name = service.getClass()
-                .getName();
-        String s = name.substring(size, name.length() - 11);
-        Class<?> aClass = Class.forName(packageName + s);
         try {
-            EasyExcel.read(file.getInputStream(), aClass, new DataListener<I, O>(service, aClass))
+            DataListener<T, T> listener = new DataListener<>(service, aClass);
+            EasyExcel.read(file.getInputStream(), aClass, listener)
                     .sheet()
                     .doRead();
+            if (StringUtils.isNotBlank(listener.errorString)) {
+                return false;
+            }
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             return false;
@@ -69,23 +67,23 @@ public class ExcelTransfer {
      * @param service 对应实体的service
      * @param list    实现自定义转换方法
      * @return 成功与否
-     * @throws ClassNotFoundException 为找到对应的类
      */
-    public static <I, O> boolean importExcel(MultipartFile file, IService<O> service, ConvertList<I, O> list) throws ClassNotFoundException {
+    public static <I, O> String importExcel(MultipartFile file, IService<O> service, Class<I> aClass,
+                                            ConvertList<I, O> list) {
         isEmpty(file);
-        String name = service.getClass()
-                .getName();
-        String s = name.substring(size, name.length() - 11);
-        Class<?> aClass = Class.forName(packageName + s);
         try {
-            EasyExcel.read(file.getInputStream(), aClass, new DataListener<>(service, list, aClass))
+            DataListener<I, O> listener = new DataListener<>(service, aClass, list);
+            EasyExcel.read(file.getInputStream(), aClass, listener)
                     .sheet()
                     .doRead();
+            if (StringUtils.isNotBlank(listener.errorString)) {
+                return listener.errorString;
+            }
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-            return false;
+            return "false";
         }
-        return true;
+        return "true";
     }
 
     /**
@@ -94,10 +92,9 @@ public class ExcelTransfer {
      * @param response    http
      * @param name        文件名称
      * @param listListMap 表头为key，数据为value
-     * @throws IOException
      */
     public static void exportExcel(HttpServletResponse response, String name,
-                            Map<List<List<String>>, List<List<String>>> listListMap) throws IOException {
+                                   Map<List<List<String>>, List<List<String>>> listListMap) throws IOException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
@@ -126,30 +123,36 @@ public class ExcelTransfer {
      * @param name     文件名称
      * @param sheet    表名
      */
-    public static <O> void exportExcel(HttpServletResponse response, List<O> list, String name, String sheet,
-                                       IService<T> service) throws ClassNotFoundException {
-        String className = service.getClass()
-                .getName();
-        String s = className.substring(size, className.length() - 11);
-        Class<?> aClass = Class.forName(packageName + s);
+    public static <I> void exportExcel(HttpServletResponse response, List<I> list, String name, String sheet,
+                                       Class<I> aClass) {
         export(response, list, name, sheet, aClass);
     }
 
-    /**
-     * 下载excel
-     *
-     * @param response http
-     * @param list     需要下载的数据
-     * @param name     文件名称
-     * @param sheet    表名
-     * @param aClass   实体类
-     */
-    public static <O> void exportExcel(HttpServletResponse response, List<O> list, String name, String sheet,
-                                       Class<?> aClass) throws ClassNotFoundException {
-        export(response, list, name, sheet, aClass);
+    public static <I> void exportExcel(HttpServletResponse response, List<I> list, String name, String sheet,
+                                       List<String> headerList) {
+        export10(response, list, name, sheet, headerList);
     }
 
-    private static <O> void export(HttpServletResponse response, List<O> list, String name, String sheet, Class<?> aClass) {
+    private static <T> void export10(HttpServletResponse response, List<T> list, String name, String sheet,
+                                     List<String> headerList) {
+        try {
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("utf-8");
+            // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+            String fileName = URLEncoder.encode(name, "UTF-8")
+                    .replaceAll("\\+", "%20");
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+            EasyExcel.write(response.getOutputStream())
+                    .sheet(sheet)
+                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    .head(getHead(headerList))
+                    .doWrite(list);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    private static <T> void export(HttpServletResponse response, List<T> list, String name, String sheet, Class<?> aClass) {
         try {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
@@ -164,6 +167,65 @@ public class ExcelTransfer {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * 下载excel，多实体，多sheet
+     *
+     * @param response http
+     * @param name     文件名称
+     * @param list     实体:数据
+     */
+    public static void exportExcel(HttpServletResponse response, String name, List<ExcelVO> list) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String fileName = URLEncoder.encode(name, "UTF-8")
+                .replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+        try (ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream())
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .build()) {
+            AtomicInteger i = new AtomicInteger(0);
+            list.forEach(e -> {
+                WriteSheet writeSheet = EasyExcel.writerSheet(i.get(), e.getSheet())
+                        .head(e.getListsHead())
+                        .build();
+                i.getAndIncrement();
+                excelWriter.write(e.getListsData(), writeSheet);
+            });
+        }
+    }
+
+    public static void exportExcel(HttpServletResponse response, String name, ExcelVO excelVO) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String fileName = URLEncoder.encode(name, "UTF-8")
+                .replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+        try (ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream())
+                .registerWriteHandler(new SimpleColumnWidthStyleStrategy(10))
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .build()) {
+            String sheet = excelVO.getSheet();
+            WriteSheet writeSheet = EasyExcel.writerSheet(sheet)
+                    .head(excelVO.getListsHead())
+                    .build();
+            excelWriter.write(excelVO.getListsData(), writeSheet);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    public static List<List<String>> getHead(List<String> headList) {
+        List<List<String>> head = new ArrayList<>();
+        headList.forEach(e -> {
+            List<String> list = new ArrayList<>();
+            list.add(e);
+            head.add(list);
+        });
+        return head;
     }
 
     private static void isEmpty(MultipartFile file) {
