@@ -4,8 +4,8 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: ${VM_IP:127.0.0.1}:8848
-        namespace: 79ec2bf2-77da-40a4-a877-a05dcadea95d
+        server-addr: ${nacos_ip:127.0.0.1}:8848
+        namespace: ae54b0ac-6f79-4a96-8d0b-40ab6fbde508
   config:
     import:
       - optional:nacos:dubbo-provider.yaml?group=CLOUD_GROUP  # 监听 DEFAULT_GROUP:test.yml

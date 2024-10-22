@@ -34,7 +34,7 @@
         <!-- 服务注册 -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-registry-nacos</artifactId>
+            <artifactId>dubbo-nacos-spring-boot-starter</artifactId>
         </dependency>
         <!-- 配置中心 -->
         <dependency>
@@ -52,15 +52,6 @@
             <artifactId>kotlin-reflect</artifactId>
             <version>1.8.0</version> <!-- 使用适合的版本 -->
         </dependency>
-        <!-- 流量控制 -->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.csp</groupId>-->
-<!--            <artifactId>sentinel-transport-simple-http</artifactId>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
