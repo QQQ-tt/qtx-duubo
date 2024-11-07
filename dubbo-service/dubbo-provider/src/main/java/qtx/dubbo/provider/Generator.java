@@ -27,7 +27,6 @@ public class Generator {
         String dubboName = "provider";
         String path = "/dubbo-service/dubbo-" + dubboName;
         String projectPath = System.getProperty("user.dir");
-
         Map<OutputFile, String> map = new HashMap<>(5);
         map.put(OutputFile.xml, projectPath + path + "/src/main/resources" + "/mapper");
         map.put(
