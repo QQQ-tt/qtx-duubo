@@ -2,7 +2,7 @@ package qtx.dubbo.provider.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,8 +27,14 @@ import java.util.Map;
 @RequestMapping("/login")
 public class CorsTestController {
 
-    @Autowired
-    private RedisUtils redisUtils;
+    private final RedisUtils redisUtils;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public CorsTestController(RedisUtils redisUtils, PasswordEncoder passwordEncoder) {
+        this.redisUtils = redisUtils;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @GetMapping("/selectAll")
     public Result<Object> test() {
@@ -53,7 +59,7 @@ public class CorsTestController {
     @PostConstruct
     public void initUser() {
         String userCode = "11022";
-        Map<String, String> map = Map.of("userCode", userCode, "password", "123456");
+        Map<String, String> map = Map.of("userCode", userCode, "password", passwordEncoder.encode("123456"));
            redisUtils.addHashMsgAll(
                 StaticConstant.SYS_USER + userCode + StaticConstant.REDIS_INFO, map);
     }
