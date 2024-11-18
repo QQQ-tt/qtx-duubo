@@ -75,7 +75,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth.anyRequest()
                         .access(authorizationManager))
-                .authenticationProvider(new JwtAuthenticationProvider(redisUtils, commonMethod));
+                .authenticationProvider(new JwtAuthenticationProvider(redisUtils));
 
         SecurityAuthFilter filter = new SecurityAuthFilter(commonMethod);
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
@@ -83,11 +83,6 @@ public class SecurityConfig {
         SecurityFilterChain chain = http.build();
         filter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
         return chain;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) {
-        return http.getSharedObject(AuthenticationManager.class);
     }
 
     /**

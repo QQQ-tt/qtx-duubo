@@ -7,9 +7,11 @@ import lombok.SneakyThrows;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import qtx.dubbo.java.enums.DataEnums;
+import qtx.dubbo.java.enums.UserInfo;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * @author qtx
@@ -18,21 +20,7 @@ import java.io.PrintWriter;
 @Component
 public class CommonMethod {
 
-    /**
-     * 获取当前登录人userCode
-     */
-    private final ThreadLocal<String> userCode = new ThreadLocal<>();
-    /**
-     * 获取请求ip
-     */
-    private final ThreadLocal<String> ip = new ThreadLocal<>();
-    /**
-     * 请求地址
-     */
-    private final ThreadLocal<String> uri = new ThreadLocal<>();
-
-    private final ThreadLocal<String> token = new ThreadLocal<>();
-
+    private static final ThreadLocal<Map<UserInfo, String>> mapThreadLocal = new ThreadLocal<>();
 
     /**
      * 过滤器返回信息
@@ -68,35 +56,68 @@ public class CommonMethod {
         writer.flush();
     }
 
-    public String getUserCode() {
-        return userCode.get();
+    public static void setMap(HttpServletRequest request, String user, String token) {
+        initialize();
+        Map<UserInfo, String> map = mapThreadLocal.get();
+        map.put(UserInfo.USER, user);
+        map.put(UserInfo.TOKEN, token);
+        map.put(UserInfo.URI, request.getRequestURI());
+        map.put(UserInfo.IP, request.getRemoteAddr());
     }
 
-    public void setUserCode(String userCode) {
-        this.userCode.set(userCode);
+    public static String getUserCode() {
+        initialize();
+        return mapThreadLocal.get()
+                .get(UserInfo.USER);
     }
 
-    public String getIp() {
-        return ip.get();
+    public static void setUserCode(String userCode) {
+        initialize();
+        mapThreadLocal.get()
+                .put(UserInfo.USER, userCode);
     }
 
-    public void setIp(String ip) {
-        this.ip.set(ip);
+    public static String getIp() {
+        return mapThreadLocal.get()
+                .get(UserInfo.IP);
     }
 
-    public String getUri() {
-        return uri.get();
+    public static void setIp(String ip) {
+        initialize();
+        mapThreadLocal.get()
+                .put(UserInfo.IP, ip);
     }
 
-    public void setUri(String uri) {
-        this.uri.set(uri);
+    public static String getUri() {
+        return mapThreadLocal.get()
+                .get(UserInfo.IP);
     }
 
-    public String getToken() {
-        return token.get();
+    public static void setUri(String uri) {
+        initialize();
+        mapThreadLocal.get()
+                .put(UserInfo.URI, uri);
     }
 
-    public void setToken(String token){
-         this.token.set(token);
+    public static String getToken() {
+        return mapThreadLocal.get()
+                .get(UserInfo.TOKEN);
+    }
+
+    public static void setToken(String token) {
+        initialize();
+        mapThreadLocal.get()
+                .put(UserInfo.TOKEN, token);
+    }
+
+    public static void initialize() {
+        Map<UserInfo, String> map = mapThreadLocal.get();
+        if (map == null) {
+            mapThreadLocal.set(Map.of(UserInfo.USER, "1"));
+        }
+    }
+
+    public void remove() {
+        mapThreadLocal.remove();
     }
 }

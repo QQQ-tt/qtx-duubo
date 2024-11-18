@@ -16,7 +16,6 @@ import qtx.dubbo.config.bo.LogBO;
 import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.AuthUrlEnums;
 import qtx.dubbo.java.enums.LogUrlEnums;
-import qtx.dubbo.java.info.StaticConstant;
 
 import java.io.IOException;
 
@@ -41,26 +40,24 @@ public class AuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String uri = commonMethod.getUri();
-        String ip = commonMethod.getIp();
-        String userCode = commonMethod.getUserCode();
-
+        String uri = request.getRequestURI();
+        String ip = request.getRemoteAddr();
         if (AuthUrlEnums.authPath(uri)) {
             RequestWrapper requestWrapper = getRequestWrapper(request, uri, null, ip);
             filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
             return;
         }
-
         if (authChain != null) {
-            boolean auth = authChain.auth(userCode, request.getHeader(StaticConstant.TOKEN), request, response);
+            boolean auth = authChain.auth(request, response);
             if (auth) {
                 return;
             }
         }
-        RequestWrapper requestWrapper = getRequestWrapper(request, uri, userCode, ip);
-        commonMethod.setUserCode(userCode);
+
+        RequestWrapper requestWrapper = getRequestWrapper(request, uri, CommonMethod.getUserCode(), ip);
 
         filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
+        commonMethod.remove();
     }
 
 

@@ -12,12 +12,10 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.info.StaticConstant;
 import qtx.dubbo.java.util.JwtUtils;
 import qtx.dubbo.redis.util.RedisUtils;
-
 
 import java.util.List;
 import java.util.Map;
@@ -30,34 +28,34 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final RedisUtils redisUtils;
 
-    private final CommonMethod commonMethod;
-
-    public JwtAuthenticationProvider(RedisUtils redisUtils, CommonMethod commonMethod) {
+    public JwtAuthenticationProvider(RedisUtils redisUtils) {
         this.redisUtils = redisUtils;
-        this.commonMethod = commonMethod;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String jwt = authentication.getCredentials()
                 .toString();
-        String userCode = commonMethod.getUserCode();
-        if (StringUtils.isBlank(commonMethod.getToken())){
+        if (StringUtils.isBlank(jwt)) {
             throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
         }
+        if (StringUtils.isNotBlank(jwt)) {
+            jwt = jwt.split(" ")[1];
+        }
+        String body;
+        try {
+            body = JwtUtils.getBodyFromToken(jwt);
+        } catch (Exception e) {
+            throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
+        }
+
         Map<Object, Object> redisUser = redisUtils.getHashMsg(
-                StaticConstant.LOGIN_USER + userCode + StaticConstant.REDIS_INFO);
+                StaticConstant.LOGIN_USER + body + StaticConstant.REDIS_INFO);
         if (redisUser == null || redisUser.isEmpty()) {
             throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
         }
 
-        String body = JwtUtils.getBodyFromToken(jwt);
 
-        if (!redisUser.get("userCode")
-                .toString()
-                .equals(body)) {
-            throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
-        }
         Claims claims = JwtUtils.getClaimsFromToken(jwt);
         assert claims != null;
         List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(

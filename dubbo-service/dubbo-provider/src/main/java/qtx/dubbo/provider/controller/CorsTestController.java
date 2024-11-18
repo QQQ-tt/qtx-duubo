@@ -36,11 +36,13 @@ public class CorsTestController {
     @PostMapping("/login")
     public Result<Login> test1(@RequestBody Login login) {
         String userCode = login.getUserCode();
+        String password = login.getPassword();
         HashMap<String, Object> map = new HashMap<>();
         map.put("roles", "abc");
         login.setToken(JwtUtils.generateToken(userCode, map));
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userCode", userCode);
+        hashMap.put("password", password);
         redisUtils.addHashMsgAll(
                 StaticConstant.LOGIN_USER + userCode + StaticConstant.REDIS_INFO, hashMap);
         return Result.success(login);

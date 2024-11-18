@@ -34,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (Objects.isNull(hashMsg) || hashMsg.isEmpty()) {
             throw new UsernameNotFoundException("用户为空");
         }
-        return new User(String.valueOf(hashMsg.get("user_code")), String.valueOf(hashMsg.get("password")),
+        return new User(String.valueOf(hashMsg.get("userCode")), String.valueOf(hashMsg.get("password")),
                 AuthorityUtils.commaSeparatedStringToAuthorityList(String.valueOf(hashMsg.get("user_role"))));
     }
 }

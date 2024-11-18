@@ -14,7 +14,7 @@ public class StaticConstant {
     /**
      * 服务认证信息
      */
-    public static final String TOKEN = "token";
+    public static final String TOKEN = "Authorization";
     /** 用户登录token */
     public static final String LOGIN_USER = "login:user:";
     public static final String SYS_URL = "sys:url:";

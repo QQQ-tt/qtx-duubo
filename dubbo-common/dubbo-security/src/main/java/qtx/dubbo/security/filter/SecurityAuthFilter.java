@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.dubbo.common.utils.StringUtils;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,12 +31,11 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
         this.commonMethod = commonMethod;
     }
 
-
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         commonMethod.setUri(request.getRequestURI());
         commonMethod.setIp(request.getRemoteAddr());
-        String userCode;
+        String userCode = "";
         String token;
         if (requiresAuthenticationRequestMatcher.matches(request)) {
             Assert.notNull(super.login, "login info is null");
@@ -54,7 +54,6 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
             if (JwtUtils.isTokenExpired(token)) {
                 throw new BadCredentialsException(DataEnums.TOKEN_LOGIN_EXPIRED.getMsg() + request.getMethod());
             }
-            userCode = JwtUtils.getBodyFromToken(token);
         }
         commonMethod.setUserCode(userCode);
         UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(userCode,
