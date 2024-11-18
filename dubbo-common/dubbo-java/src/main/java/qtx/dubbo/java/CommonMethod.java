@@ -11,6 +11,7 @@ import qtx.dubbo.java.enums.UserInfo;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -113,7 +114,9 @@ public class CommonMethod {
     public static void initialize() {
         Map<UserInfo, String> map = mapThreadLocal.get();
         if (map == null) {
-            mapThreadLocal.set(Map.of(UserInfo.USER, "1"));
+            HashMap<UserInfo, String> value = new HashMap<>();
+            value.put(UserInfo.USER, "1");
+            mapThreadLocal.set(value);
         }
     }
 

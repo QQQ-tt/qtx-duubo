@@ -40,7 +40,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
         }
         if (StringUtils.isNotBlank(jwt)) {
-            jwt = jwt.split(" ")[1];
+            try {
+                jwt = jwt.split(" ")[1];
+            } catch (Exception e) {
+                throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
+            }
         }
         String body;
         try {
