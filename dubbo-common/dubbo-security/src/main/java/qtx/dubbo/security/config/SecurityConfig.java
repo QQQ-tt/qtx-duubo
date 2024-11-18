@@ -77,7 +77,7 @@ public class SecurityConfig {
                         .access(authorizationManager))
                 .authenticationProvider(new JwtAuthenticationProvider(redisUtils));
 
-        SecurityAuthFilter filter = new SecurityAuthFilter(commonMethod);
+        SecurityAuthFilter filter = new SecurityAuthFilter();
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 
         SecurityFilterChain chain = http.build();

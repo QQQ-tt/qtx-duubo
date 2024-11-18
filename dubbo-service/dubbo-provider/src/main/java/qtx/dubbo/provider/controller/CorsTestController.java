@@ -1,6 +1,7 @@
 package qtx.dubbo.provider.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import qtx.dubbo.security.Login;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author qtx
@@ -46,5 +48,13 @@ public class CorsTestController {
         redisUtils.addHashMsgAll(
                 StaticConstant.LOGIN_USER + userCode + StaticConstant.REDIS_INFO, hashMap);
         return Result.success(login);
+    }
+
+    @PostConstruct
+    public void initUser() {
+        String userCode = "11022";
+        Map<String, String> map = Map.of("userCode", userCode, "password", "123456");
+           redisUtils.addHashMsgAll(
+                StaticConstant.SYS_USER + userCode + StaticConstant.REDIS_INFO, map);
     }
 }

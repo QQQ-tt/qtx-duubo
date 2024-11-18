@@ -24,17 +24,14 @@ import qtx.dubbo.security.Login;
  */
 public class SecurityAuthFilter extends AbstractAuthFilter {
 
-    private final CommonMethod commonMethod;
-
-    public SecurityAuthFilter(CommonMethod commonMethod) {
+    public SecurityAuthFilter() {
         super(new AntPathRequestMatcher("/login/login", "POST"));
-        this.commonMethod = commonMethod;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        commonMethod.setUri(request.getRequestURI());
-        commonMethod.setIp(request.getRemoteAddr());
+        CommonMethod.setUri(request.getRequestURI());
+        CommonMethod.setIp(request.getRemoteAddr());
         String userCode = "";
         String token;
         if (requiresAuthenticationRequestMatcher.matches(request)) {
@@ -44,7 +41,7 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
             token = login.getPassword();
         } else {
             token = request.getHeader(StaticConstant.TOKEN);
-            commonMethod.setToken(token);
+            CommonMethod.setToken(token);
             if (StringUtils.isBlank(token)) {
                 throw new BadCredentialsException(DataEnums.ACCESS_DENIED.getMsg() + request.getMethod());
             }
@@ -55,7 +52,7 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
                 throw new BadCredentialsException(DataEnums.TOKEN_LOGIN_EXPIRED.getMsg() + request.getMethod());
             }
         }
-        commonMethod.setUserCode(userCode);
+        CommonMethod.setUserCode(userCode);
         UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(userCode,
                 token);
         return this.getAuthenticationManager()
