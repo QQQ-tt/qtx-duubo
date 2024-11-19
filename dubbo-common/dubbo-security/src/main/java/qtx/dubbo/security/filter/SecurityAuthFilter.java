@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,6 +44,7 @@ public class SecurityAuthFilter extends AbstractAuthFilter {
             if (StringUtils.isBlank(token)) {
                 throw new BadCredentialsException(DataEnums.ACCESS_DENIED.getMsg() + request.getMethod());
             }
+            token = token.split(" ")[1];
             if (!JwtUtils.validateToken(token)) {
                 throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg() + request.getMethod());
             }

@@ -39,13 +39,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         if (StringUtils.isBlank(jwt)) {
             throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
         }
-        if (StringUtils.isNotBlank(jwt)) {
-            try {
-                jwt = jwt.split(" ")[1];
-            } catch (Exception e) {
-                throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
-            }
-        }
         String body;
         try {
             body = JwtUtils.getBodyFromToken(jwt);
