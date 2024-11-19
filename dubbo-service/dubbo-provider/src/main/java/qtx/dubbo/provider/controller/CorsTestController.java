@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import qtx.dubbo.java.Result;
 import qtx.dubbo.java.info.StaticConstant;
 import qtx.dubbo.java.util.JwtUtils;
+import qtx.dubbo.model.entity.provider.AcBusiness;
+import qtx.dubbo.provider.impl.AcBusinessServiceTwoImpl;
 import qtx.dubbo.redis.util.RedisUtils;
 import qtx.dubbo.security.Login;
-
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,14 +32,17 @@ public class CorsTestController {
 
     private final PasswordEncoder passwordEncoder;
 
-    public CorsTestController(RedisUtils redisUtils, PasswordEncoder passwordEncoder) {
+    private final AcBusinessServiceTwoImpl acBusinessServiceTwo;
+
+    public CorsTestController(RedisUtils redisUtils, PasswordEncoder passwordEncoder, AcBusinessServiceTwoImpl acBusinessServiceTwo) {
         this.redisUtils = redisUtils;
         this.passwordEncoder = passwordEncoder;
+        this.acBusinessServiceTwo = acBusinessServiceTwo;
     }
 
     @GetMapping("/selectAll")
-    public Result<Object> test() {
-        return Result.success();
+    public Result<AcBusiness> test() {
+        return Result.success(acBusinessServiceTwo.test1(false));
     }
 
     @PostMapping("/login")

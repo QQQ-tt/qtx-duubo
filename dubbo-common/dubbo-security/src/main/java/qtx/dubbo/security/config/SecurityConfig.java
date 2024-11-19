@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.redis.util.RedisUtils;
 import qtx.dubbo.security.filter.SecurityAuthFilter;
 import qtx.dubbo.security.provider.JwtAuthenticationProvider;
@@ -42,23 +41,19 @@ public class SecurityConfig {
 
     private final RedisUtils redisUtils;
 
-    private final CommonMethod commonMethod;
-
     public SecurityConfig(DiyAccessDeniedHandler accessDeniedHandler,
                           DiyAuthenticationEntryPoint authenticationEntryPoint,
-                          DiyAuthorizationManager authorizationManager, RedisUtils redisUtils,
-                          CommonMethod commonMethod) {
+                          DiyAuthorizationManager authorizationManager, RedisUtils redisUtils) {
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authorizationManager = authorizationManager;
         this.redisUtils = redisUtils;
-        this.commonMethod = commonMethod;
     }
 
     /**
      * 密码解密方式
      *
-     * @return
+     * @return 密码加密对象
      */
     @Bean
     public PasswordEncoder passwordEncoder() {

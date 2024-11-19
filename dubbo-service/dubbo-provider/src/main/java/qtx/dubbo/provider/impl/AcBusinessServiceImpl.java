@@ -2,7 +2,6 @@ package qtx.dubbo.provider.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.springframework.stereotype.Service;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.exception.DataException;
 import qtx.dubbo.model.entity.provider.AcBusiness;
@@ -20,7 +19,6 @@ import java.util.Map;
  * @author qtx
  * @since 2023-03-30
  */
-@Service
 @DubboService(version = "1.0.0")
 public class AcBusinessServiceImpl extends ServiceImpl<AcBusinessMapper, AcBusiness>
         implements AcBusinessService {
