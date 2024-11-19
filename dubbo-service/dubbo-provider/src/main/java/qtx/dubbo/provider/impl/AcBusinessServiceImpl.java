@@ -23,7 +23,6 @@ import java.util.Map;
 public class AcBusinessServiceImpl extends ServiceImpl<AcBusinessMapper, AcBusiness>
         implements AcBusinessService {
 
-
     @Override
     public Map<String, Object> test(Map<String, Object> map) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -46,9 +45,9 @@ public class AcBusinessServiceImpl extends ServiceImpl<AcBusinessMapper, AcBusin
 
     @Override
     public AcBusiness test1(boolean flag) {
-        if (flag){
+        if (flag) {
             new DataException(DataEnums.FAILED);
         }
-        return AcBusiness.builder().businessInfo("哈哈哈").id(1).acNameId(2).build();
+        return AcBusiness.builder().businessInfo("哈哈哈").id(1).acNameId(1111).build();
     }
 }
