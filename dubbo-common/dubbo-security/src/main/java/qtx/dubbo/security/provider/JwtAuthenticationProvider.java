@@ -1,7 +1,6 @@
 package qtx.dubbo.security.provider;
 
 import io.jsonwebtoken.Claims;
-import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +11,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.info.StaticConstant;
 import qtx.dubbo.java.util.JwtUtils;
@@ -19,6 +19,7 @@ import qtx.dubbo.redis.util.RedisUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author qtx
@@ -34,14 +35,27 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String jwt = authentication.getCredentials()
-                .toString();
-        if (StringUtils.isBlank(jwt)) {
-            throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
+        Object authenticationCredentials = authentication.getCredentials();
+        if (Objects.isNull(authenticationCredentials)) {
+            throw new BadCredentialsException(DataEnums.ACCESS_DENIED.getMsg());
+        }
+        String token;
+        try {
+            token = authenticationCredentials.toString()
+                    .split(" ")[1];
+        } catch (Exception e) {
+            throw new BadCredentialsException(DataEnums.TOKEN_IS_NULL.getMsg());
+        }
+        CommonMethod.setToken(token);
+        if (!JwtUtils.validateToken(token)) {
+            throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
+        }
+        if (JwtUtils.isTokenExpired(token)) {
+            throw new BadCredentialsException(DataEnums.TOKEN_LOGIN_EXPIRED.getMsg());
         }
         String body;
         try {
-            body = JwtUtils.getBodyFromToken(jwt);
+            body = JwtUtils.getBodyFromToken(token);
         } catch (Exception e) {
             throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
         }
@@ -52,8 +66,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
         }
 
-
-        Claims claims = JwtUtils.getClaimsFromToken(jwt);
+        Claims claims = JwtUtils.getClaimsFromToken(token);
         assert claims != null;
         List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(
                 String.valueOf(claims.get("roles")));

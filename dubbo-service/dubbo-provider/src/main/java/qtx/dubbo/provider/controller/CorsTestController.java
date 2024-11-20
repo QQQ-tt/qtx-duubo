@@ -1,5 +1,6 @@
 package qtx.dubbo.provider.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +41,7 @@ public class CorsTestController {
         this.acBusinessServiceTwo = acBusinessServiceTwo;
     }
 
+    @Operation(summary = "测试接口")
     @GetMapping("/selectAll")
     public Result<AcBusiness> test() {
         return Result.success(acBusinessServiceTwo.test1(false));
@@ -50,11 +52,14 @@ public class CorsTestController {
         String userCode = login.getUserCode();
         String password = login.getPassword();
         HashMap<String, Object> map = new HashMap<>();
+        String s = JwtUtils.generateToken(userCode, map);
         map.put("roles", "abc");
-        login.setToken(JwtUtils.generateToken(userCode, map));
+        login.setToken(s);
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userCode", userCode);
         hashMap.put("password", password);
+        hashMap.put("token", s);
+        hashMap.put("roles", "abc");
         redisUtils.addHashMsgAll(
                 StaticConstant.LOGIN_USER + userCode + StaticConstant.REDIS_INFO, hashMap);
         return Result.success(login);

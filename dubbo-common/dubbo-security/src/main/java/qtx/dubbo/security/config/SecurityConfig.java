@@ -3,6 +3,7 @@ package qtx.dubbo.security.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -61,19 +62,36 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        http.securityMatcher("/user/add")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint))
-                .authorizeHttpRequests(auth -> auth.anyRequest()
-                        .access(authorizationManager))
-                .authenticationProvider(new JwtAuthenticationProvider(redisUtils));
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/user/add")
+                        .permitAll());
+        return http.build();
+    }
 
+    @Bean
+    @Order(2)
+    public SecurityFilterChain myFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/**")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint))
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest()
+                        .access(authorizationManager)).
+                authenticationProvider(new JwtAuthenticationProvider(redisUtils));
         SecurityAuthFilter filter = new SecurityAuthFilter();
-        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class);
 
         SecurityFilterChain chain = http.build();
         filter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
