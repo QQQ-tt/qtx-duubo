@@ -64,14 +64,14 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/user/add")
+        http.securityMatcher("/user/**")
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/user/add")
+                .authorizeHttpRequests(auth -> auth.anyRequest()
                         .permitAll());
         return http.build();
     }

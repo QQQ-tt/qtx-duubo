@@ -47,6 +47,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException(DataEnums.TOKEN_IS_NULL.getMsg());
         }
         CommonMethod.setToken(token);
+
         if (!JwtUtils.validateToken(token)) {
             throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
         }
@@ -59,7 +60,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         } catch (Exception e) {
             throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
         }
-
+        CommonMethod.setUserCode(body);
         Map<Object, Object> redisUser = redisUtils.getHashMsg(
                 StaticConstant.LOGIN_USER + body + StaticConstant.REDIS_INFO);
         if (redisUser == null || redisUser.isEmpty()) {

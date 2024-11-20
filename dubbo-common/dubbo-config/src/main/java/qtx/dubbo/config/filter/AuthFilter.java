@@ -45,6 +45,7 @@ public class AuthFilter extends OncePerRequestFilter {
         if (AuthUrlEnums.authPath(uri)) {
             RequestWrapper requestWrapper = getRequestWrapper(request, uri, null, ip);
             filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
+            CommonMethod.remove();
             return;
         }
         if (authChain != null) {
@@ -57,7 +58,7 @@ public class AuthFilter extends OncePerRequestFilter {
         RequestWrapper requestWrapper = getRequestWrapper(request, uri, CommonMethod.getUserCode(), ip);
 
         filterChain.doFilter(requestWrapper == null ? request : requestWrapper, response);
-        commonMethod.remove();
+        CommonMethod.remove();
     }
 
 

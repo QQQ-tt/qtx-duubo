@@ -120,7 +120,7 @@ public class CommonMethod {
         }
     }
 
-    public void remove() {
+    public static void remove() {
         mapThreadLocal.remove();
     }
 }
