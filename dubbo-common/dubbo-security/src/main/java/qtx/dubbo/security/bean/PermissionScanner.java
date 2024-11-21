@@ -84,7 +84,7 @@ public class PermissionScanner {
                     }
 
                     if (StaticConstant.AUTH_KEY.equals(description)) {
-                        publicPath.add(fullPath);
+                        publicPath.add(childPath);
                     }
 
                     // 构建权限配置
