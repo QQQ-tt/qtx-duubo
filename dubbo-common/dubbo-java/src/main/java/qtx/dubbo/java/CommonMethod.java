@@ -132,6 +132,9 @@ public class CommonMethod {
     }
 
     public static void setAuthPublicPath(List<String> authPublicPath) {
+        if (authPublicPath.isEmpty()) {
+            authPublicPath.add("/8a1f464f527257cba24db42d6a8e7661");
+        }
         CommonMethod.authPublicPath.set(authPublicPath);
     }
 
