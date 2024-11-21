@@ -36,6 +36,9 @@ public class PermissionScanner {
 
     @PostConstruct
     public void generatePermissionConfig() {
+        // 获取springboot的名字
+        String applicationName = applicationContext.getId();
+        redisUtils.deleteByKey("permission:" + applicationName + ":*");
         List<Map<String, Object>> permissions = new ArrayList<>();
         List<String> publicPath = new ArrayList<>();
 
@@ -91,7 +94,7 @@ public class PermissionScanner {
                             httpMethod,
                             "summary", summary, "public", description);
                     permissions.add(objectMap);
-                    redisUtils.addListMsg("permission:" + moduleName, objectMap);
+                    redisUtils.addListMsg("permission:" + applicationName + ":" + moduleName, objectMap);
                 }
             }
         }
