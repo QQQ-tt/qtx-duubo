@@ -53,34 +53,32 @@ public class PermissionScanner {
             Tag tagAnnotation = controllerClass.getAnnotation(Tag.class);
             // 模块名称
             String moduleName = (tagAnnotation != null) ? tagAnnotation.name() : "Default Module";
-
+            // 获取路径和方法信息
+            RequestMapping requestMapping = controllerClass.getAnnotation(RequestMapping.class);
+            // 路径
+            String fullPath = (requestMapping != null && requestMapping.value().length > 0) ? requestMapping.value()[0] : "";
             // 遍历方法，获取接口相关信息
             for (Method method : controllerClass.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(Operation.class)) {
+                    String childPath = fullPath;
                     // 获取 @Operation 信息
                     Operation operation = method.getAnnotation(Operation.class);
                     // 接口描述
                     String summary = operation.summary();
                     // 权限描述
                     String description = operation.description();
-                    // 获取路径和方法信息
-                    RequestMapping requestMapping = controllerClass.getAnnotation(RequestMapping.class);
-                    // 路径
-                    String fullPath = (requestMapping != null && requestMapping.value().length > 0) ? requestMapping.value()[0] : "";
-
                     // HTTP 方法
                     String httpMethod = "GET";
-
                     if (method.isAnnotationPresent(PostMapping.class)) {
-                        fullPath += method.getAnnotation(PostMapping.class)
+                        childPath += method.getAnnotation(PostMapping.class)
                                 .value()[0];
                         httpMethod = "POST";
                     } else if (method.isAnnotationPresent(DeleteMapping.class)) {
-                        fullPath += method.getAnnotation(DeleteMapping.class)
+                        childPath += method.getAnnotation(DeleteMapping.class)
                                 .value()[0];
                         httpMethod = "DELETE";
                     } else if (method.isAnnotationPresent(GetMapping.class)) {
-                        fullPath += method.getAnnotation(GetMapping.class)
+                        childPath += method.getAnnotation(GetMapping.class)
                                 .value()[0];
                         httpMethod = "GET";
                     }
@@ -90,7 +88,7 @@ public class PermissionScanner {
                     }
 
                     // 构建权限配置
-                    Map<String, Object> objectMap = Map.of("moduleName", moduleName, "path", fullPath, "httpMethod",
+                    Map<String, Object> objectMap = Map.of("moduleName", moduleName, "path", childPath, "httpMethod",
                             httpMethod,
                             "summary", summary, "public", description);
                     permissions.add(objectMap);
