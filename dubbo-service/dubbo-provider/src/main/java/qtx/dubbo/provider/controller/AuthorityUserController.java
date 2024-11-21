@@ -20,13 +20,12 @@ public class AuthorityUserController {
     @Operation(summary = "新增")
     @PostMapping("/add")
     public Result<Object> add() {
-        System.out.println("add");
-        return Result.success();
+        return Result.success("user/add");
     }
 
     @Operation(summary = "删除")
     @DeleteMapping("/delete")
-    public void delete() {
-        System.out.println("delete");
+    public Result<String> delete() {
+        return Result.success("user/delete");
     }
 }
