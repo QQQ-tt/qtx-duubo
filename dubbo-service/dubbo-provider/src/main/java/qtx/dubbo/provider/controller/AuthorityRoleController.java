@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import qtx.dubbo.java.info.StaticConstant;
 
 /**
  * @author qtx
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/role")
 public class AuthorityRoleController {
 
-    @Operation(summary = "新增")
+    @Operation(summary = "新增", description = StaticConstant.AUTH_KEY)
     @PostMapping("/add")
     public void add() {
         System.out.println("add");

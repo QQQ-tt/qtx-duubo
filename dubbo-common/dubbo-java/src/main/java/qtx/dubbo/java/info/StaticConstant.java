@@ -28,4 +28,6 @@ public class StaticConstant {
     public static final String ACTIVITY_PARENT = "000000";
 
     public static final String ROCKETMQ_KEY = "Order";
+
+    public static final String AUTH_KEY = "public";
 }

@@ -37,6 +37,17 @@ public class RedisUtils {
     }
 
     /**
+     * 添加List类型
+     * @param key key
+     * @param msg msg
+     */
+    public void addListMsg(String key, Object msg) {
+        redisTemplate.opsForList()
+                .rightPush(key, msg);
+        redisTemplate.expire(key, 300, TimeUnit.MINUTES);
+    }
+
+    /**
      * 添加object类型
      * 自定义过期时间
      *

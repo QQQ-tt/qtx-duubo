@@ -12,6 +12,7 @@ import qtx.dubbo.java.enums.UserInfo;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,8 +21,14 @@ import java.util.Map;
  */
 @Component
 public class CommonMethod {
-
+    /**
+     * 用户信息
+     */
     private static final ThreadLocal<Map<UserInfo, String>> mapThreadLocal = new ThreadLocal<>();
+    /**
+     * 公开匿名路径
+     */
+    private static final ThreadLocal<List<String>> authPublicPath = new ThreadLocal<>();
 
     /**
      * 过滤器返回信息
@@ -122,5 +129,15 @@ public class CommonMethod {
 
     public static void remove() {
         mapThreadLocal.remove();
+    }
+
+    public static void setAuthPublicPath(List<String> authPublicPath) {
+        CommonMethod.authPublicPath.set(authPublicPath);
+    }
+
+    public static String[] getAuthPublicPath() {
+        List<String> strings = authPublicPath.get();
+        authPublicPath.remove();
+        return strings.toArray(String[]::new);
     }
 }

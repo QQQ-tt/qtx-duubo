@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.redis.util.RedisUtils;
 import qtx.dubbo.security.filter.SecurityAuthFilter;
 import qtx.dubbo.security.provider.JwtAuthenticationProvider;
@@ -64,7 +65,7 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/user/**")
+        http.securityMatcher(CommonMethod.getAuthPublicPath())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
