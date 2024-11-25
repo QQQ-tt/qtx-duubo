@@ -38,7 +38,7 @@ public class PermissionScanner {
     public void generatePermissionConfig() {
         // 获取springboot的名字
         String applicationName = applicationContext.getId();
-        redisUtils.deleteByKey("permission:" + applicationName + ":*");
+        redisUtils.deleteByKey("permission:" + applicationName + "*");
         List<Map<String, Object>> permissions = new ArrayList<>();
         List<String> publicPath = new ArrayList<>();
 
