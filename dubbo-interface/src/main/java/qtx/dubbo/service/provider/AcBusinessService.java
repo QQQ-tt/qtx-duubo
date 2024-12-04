@@ -14,13 +14,13 @@ import java.util.Map;
  * @since 2023-03-30
  */
 public interface AcBusinessService extends IService<AcBusiness> {
-  /**
-   * 测试
-   *
-   * @return 返回值
-   */
-  Map<String, Object> test(Map<String,Object> map);
 
-  AcBusiness test1(boolean flag);
+    /**
+     * 测试
+     *
+     * @return 返回值
+     */
+    Map<String, Object> test(Map<String, Object> map);
 
+    AcBusiness test1(boolean flag);
 }

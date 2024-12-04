@@ -17,4 +17,8 @@ import qtx.dubbo.service.log.SysLogService;
 @Service
 public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> implements SysLogService {
 
+    @Override
+    public void test() {
+
+    }
 }

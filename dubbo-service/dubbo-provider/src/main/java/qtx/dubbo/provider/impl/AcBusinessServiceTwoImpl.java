@@ -5,11 +5,14 @@ import org.apache.dubbo.config.annotation.DubboService;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.exception.DataException;
 import qtx.dubbo.model.entity.provider.AcBusiness;
+import qtx.dubbo.model.entity.provider.Car;
+import qtx.dubbo.model.entity.provider.Person;
 import qtx.dubbo.provider.mapper.AcBusinessMapper;
 import qtx.dubbo.service.provider.AcBusinessService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>
@@ -51,4 +54,15 @@ public class AcBusinessServiceTwoImpl extends ServiceImpl<AcBusinessMapper, AcBu
         }
         return AcBusiness.builder().businessInfo("哈哈哈two").id(2).acNameId(2).build();
     }
+
+    public Optional<String> test(Person person, Car car) {
+        Optional<Person> optionalPerson = Optional.of(person);
+        Optional<Car> optionalCar = Optional.of(car);
+        return optionalPerson.flatMap(p -> optionalCar.map(c -> testNull(p, c)));
+    }
+
+    public String testNull(Person person, Car car) {
+        return person.getName() + car.getName();
+    }
+    
 }

@@ -12,5 +12,5 @@ import qtx.dubbo.model.entity.log.SysLog;
  * @since 2023-07-27
  */
 public interface SysLogService extends IService<SysLog> {
-
+    void test();
 }
