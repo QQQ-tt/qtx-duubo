@@ -17,6 +17,7 @@
         <module>dubbo-activity</module>
         <module>dubbo-other</module>
         <module>dubbo-batch</module>
+        <module>dubbo-order</module>
     </modules>
 
     <properties>
