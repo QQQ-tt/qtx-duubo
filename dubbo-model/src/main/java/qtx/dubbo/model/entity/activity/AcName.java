@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import qtx.dubbo.model.base.BaseEntity;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * <p>
  * 单一流程名称表
@@ -25,8 +28,9 @@ import qtx.dubbo.model.base.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("ac_name")
-public class AcName extends BaseEntity {
+public class AcName extends BaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)

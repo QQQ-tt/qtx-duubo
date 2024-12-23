@@ -28,12 +28,9 @@ import java.io.IOException;
 @WebFilter("/*")
 public class AuthFilter extends OncePerRequestFilter {
 
-    private final CommonMethod commonMethod;
-
     private final AuthChain authChain;
 
-    public AuthFilter(CommonMethod commonMethod, @Autowired(required = false) AuthChain authChain) {
-        this.commonMethod = commonMethod;
+    public AuthFilter(@Autowired(required = false) AuthChain authChain) {
         this.authChain = authChain;
     }
 

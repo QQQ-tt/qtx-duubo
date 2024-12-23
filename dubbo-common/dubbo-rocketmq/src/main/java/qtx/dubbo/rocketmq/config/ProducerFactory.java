@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
  * @since 2023/7/18
  */
 @Component
-@ConditionalOnProperty(name = "rocketmq.enable",havingValue = "true")
+@ConditionalOnProperty(name = "rocketmq.enable", havingValue = "true")
 public class ProducerFactory {
 
     private static final ConcurrentMap<String, Producer> PRODUCER = new ConcurrentHashMap<>(50);

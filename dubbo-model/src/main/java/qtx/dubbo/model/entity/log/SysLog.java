@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import qtx.dubbo.model.base.BaseEntity;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * <p>
  * 系统日志
@@ -19,8 +22,9 @@ import qtx.dubbo.model.base.BaseEntity;
 @Getter
 @Setter
 @TableName("sys_log")
-public class SysLog extends BaseEntity {
+public class SysLog extends BaseEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)

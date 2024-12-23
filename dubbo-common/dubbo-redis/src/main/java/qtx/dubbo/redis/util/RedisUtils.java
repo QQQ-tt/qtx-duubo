@@ -141,12 +141,16 @@ public class RedisUtils {
         redisTemplate.delete(key);
     }
 
+    public void deleteByKeys(String key) {
+        Set<String> keys = redisTemplate.keys(key);
+        keys.forEach(this::deleteByKey);
+    }
+
     /**
      * 删除所有缓存
      */
     public void delAll() {
         Set<String> keys = redisTemplate.keys("*");
-        assert keys != null;
         keys.forEach(this::deleteByKey);
     }
 }

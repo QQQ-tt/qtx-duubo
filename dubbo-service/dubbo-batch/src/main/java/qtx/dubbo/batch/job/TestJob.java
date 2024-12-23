@@ -23,7 +23,6 @@ public class TestJob {
         this.jobRepository = jobRepository;
     }
 
-
     @Bean(name = "footballJob")
     public Job footballJob(@Qualifier("testStepRead") Step step) {
         return new JobBuilder("footballJob", jobRepository)

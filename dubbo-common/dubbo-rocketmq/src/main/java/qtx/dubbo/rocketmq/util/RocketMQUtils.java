@@ -71,7 +71,7 @@ public class RocketMQUtils {
         try {
             //发送消息，需要关注发送结果，并捕获失败等异常。
             SendReceipt sendReceipt = producer.send(message);
-            log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
+            log.info("SendMsg message successfully, messageId={}", sendReceipt.getMessageId());
         } catch (ClientException e) {
             log.error("Failed to send message", e);
         }
@@ -108,7 +108,7 @@ public class RocketMQUtils {
                 // Return early.
                 return;
             }
-            log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
+            log.info("SendAsyncMsg message successfully, messageId={}", sendReceipt.getMessageId());
         }, sendCallbackExecutor);
 
     }
@@ -140,7 +140,7 @@ public class RocketMQUtils {
         try {
             //发送消息，需要关注发送结果，并捕获失败等异常。
             SendReceipt sendReceipt = producer.send(message);
-            log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
+            log.info("SendTimeMsg message successfully, messageId={}", sendReceipt.getMessageId());
         } catch (ClientException e) {
             log.error("Failed to send message", e);
         }
@@ -173,7 +173,7 @@ public class RocketMQUtils {
         try {
             //发送消息，需要关注发送结果，并捕获失败等异常。
             SendReceipt sendReceipt = producer.send(message);
-            log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
+            log.info("SendOrderMsg message successfully, messageId={}", sendReceipt.getMessageId());
         } catch (ClientException e) {
             log.error("Failed to send message", e);
         }
@@ -213,7 +213,7 @@ public class RocketMQUtils {
         }
         if (flag) {
             assert sendReceipt != null;
-            log.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
+            log.info("SendTransactionMsg message successfully, messageId={}", sendReceipt.getMessageId());
             transaction.commit();
         } else {
             transaction.rollback();
