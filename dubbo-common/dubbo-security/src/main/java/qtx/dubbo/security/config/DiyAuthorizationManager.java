@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.stereotype.Component;
-import qtx.dubbo.redis.util.RedisUtils;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -23,12 +22,6 @@ import java.util.function.Supplier;
 @Component
 @ConditionalOnProperty(name = "spring.security", havingValue = "true")
 public class DiyAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
-
-    private final RedisUtils redisUtils;
-
-    public DiyAuthorizationManager(RedisUtils redisUtils) {
-        this.redisUtils = redisUtils;
-    }
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext object) {

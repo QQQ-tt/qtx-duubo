@@ -18,7 +18,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import qtx.dubbo.java.CommonMethod;
-import qtx.dubbo.redis.util.RedisUtils;
 import qtx.dubbo.security.filter.SecurityAuthFilter;
 import qtx.dubbo.security.provider.JwtAuthenticationProvider;
 
@@ -41,15 +40,12 @@ public class SecurityConfig {
 
     private final DiyAuthorizationManager authorizationManager;
 
-    private final RedisUtils redisUtils;
-
     public SecurityConfig(DiyAccessDeniedHandler accessDeniedHandler,
                           DiyAuthenticationEntryPoint authenticationEntryPoint,
-                          DiyAuthorizationManager authorizationManager, RedisUtils redisUtils) {
+                          DiyAuthorizationManager authorizationManager) {
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authorizationManager = authorizationManager;
-        this.redisUtils = redisUtils;
     }
 
     /**
@@ -90,7 +86,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest()
                         .access(authorizationManager)).
-                authenticationProvider(new JwtAuthenticationProvider(redisUtils));
+                authenticationProvider(new JwtAuthenticationProvider());
         SecurityAuthFilter filter = new SecurityAuthFilter();
         http.addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class);
 

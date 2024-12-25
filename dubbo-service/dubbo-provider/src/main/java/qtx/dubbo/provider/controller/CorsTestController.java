@@ -14,7 +14,7 @@ import qtx.dubbo.java.info.StaticConstant;
 import qtx.dubbo.java.util.JwtUtils;
 import qtx.dubbo.model.entity.provider.AcBusiness;
 import qtx.dubbo.provider.impl.AcBusinessServiceTwoImpl;
-import qtx.dubbo.redis.util.RedisUtils;
+import qtx.dubbo.redis.RedisUtils;
 import qtx.dubbo.security.Login;
 
 import java.util.HashMap;
@@ -29,14 +29,11 @@ import java.util.Map;
 @RequestMapping("/login")
 public class CorsTestController {
 
-    private final RedisUtils redisUtils;
-
     private final PasswordEncoder passwordEncoder;
 
     private final AcBusinessServiceTwoImpl acBusinessServiceTwo;
 
-    public CorsTestController(RedisUtils redisUtils, PasswordEncoder passwordEncoder, AcBusinessServiceTwoImpl acBusinessServiceTwo) {
-        this.redisUtils = redisUtils;
+    public CorsTestController(PasswordEncoder passwordEncoder, AcBusinessServiceTwoImpl acBusinessServiceTwo) {
         this.passwordEncoder = passwordEncoder;
         this.acBusinessServiceTwo = acBusinessServiceTwo;
     }
@@ -55,12 +52,12 @@ public class CorsTestController {
         String s = JwtUtils.generateToken(userCode, map);
         map.put("roles", "abc");
         login.setToken(s);
-        HashMap<String, Object> hashMap = new HashMap<>();
+        HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("userCode", userCode);
         hashMap.put("password", password);
         hashMap.put("token", s);
         hashMap.put("roles", "abc");
-        redisUtils.addHashMsgAll(
+        RedisUtils.hPutAll(
                 StaticConstant.LOGIN_USER + userCode + StaticConstant.REDIS_INFO, hashMap);
         return Result.success(login);
     }
@@ -69,7 +66,7 @@ public class CorsTestController {
     public void initUser() {
         String userCode = "11022";
         Map<String, String> map = Map.of("userCode", userCode, "password", passwordEncoder.encode("123456"));
-           redisUtils.addHashMsgAll(
+        RedisUtils.hPutAll(
                 StaticConstant.SYS_USER + userCode + StaticConstant.REDIS_INFO, map);
     }
 }

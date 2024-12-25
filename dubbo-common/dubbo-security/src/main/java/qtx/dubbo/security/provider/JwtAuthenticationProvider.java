@@ -15,7 +15,7 @@ import qtx.dubbo.java.CommonMethod;
 import qtx.dubbo.java.enums.DataEnums;
 import qtx.dubbo.java.info.StaticConstant;
 import qtx.dubbo.java.util.JwtUtils;
-import qtx.dubbo.redis.util.RedisUtils;
+import qtx.dubbo.redis.RedisUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -26,12 +26,6 @@ import java.util.Objects;
  * @since 2023/9/25
  */
 public class JwtAuthenticationProvider implements AuthenticationProvider {
-
-    private final RedisUtils redisUtils;
-
-    public JwtAuthenticationProvider(RedisUtils redisUtils) {
-        this.redisUtils = redisUtils;
-    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -61,9 +55,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException(DataEnums.TOKEN_IS_ILLEGAL.getMsg());
         }
         CommonMethod.setUserCode(body);
-        Map<Object, Object> redisUser = redisUtils.getHashMsg(
+        Map<Object, Object> redisUser = RedisUtils.hGetAll(
                 StaticConstant.LOGIN_USER + body + StaticConstant.REDIS_INFO);
-        if (redisUser == null || redisUser.isEmpty()) {
+        if (redisUser.isEmpty()) {
             throw new UsernameNotFoundException(DataEnums.USER_NOT_LOGIN.getMsg());
         }
 

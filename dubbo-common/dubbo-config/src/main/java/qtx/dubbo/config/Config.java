@@ -76,7 +76,7 @@ public class Config {
         return mapper;
     }
 
-    @Bean
+//    @Bean
     public ThreadPoolExecutor threadPoolExecutor(ThreadPoolConfigProperties pool) {
         return new ThreadPoolExecutor(
                 pool.getCoreSize(),
